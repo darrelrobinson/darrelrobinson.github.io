@@ -2,8 +2,11 @@ name: "darrels-website"
 output_dir: "."
 navbar:
   title: "Darrel's Website"
-  left:
+  right:
     - text: "Home"
       href: index.html
     - text: "About Me"
       href: about.html
+output:
+  html_document:
+    theme: minty
