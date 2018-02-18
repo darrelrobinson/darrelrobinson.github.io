@@ -1,12 +1,16 @@
 name: "darrels-website"
 output_dir: "."
 navbar:
-  title: "Darrel's Website"
+  title: "Darrel Robinson's Website"
   right:
     - text: "Home"
       href: index.html
     - text: "About Me"
       href: about.html
+    - text: "Research"
+      href: research.html
+    - text: "R Projects"
+      href: r_stuff.html
 output:
   html_document:
-    theme: minty
+    theme: journal
