@@ -5,17 +5,12 @@ navbar:
   right:
     - text: "Home"
       href: index.html
-    - text: "About Me"
-      href: about.html
     - text: "Research"
       href: research.html
+    - text: "Teaching Experience"
+      href: teaching.html
     - text: "R Projects"
       href: r_stuff.html
-      menu:
-      - text: "GitHub"
-        href: https://github.com/darrelrobinson
-      - text: "Visualizing dummy variables in linear regression"
-        href: dummy.html
 output:
   html_document:
     theme: lumen

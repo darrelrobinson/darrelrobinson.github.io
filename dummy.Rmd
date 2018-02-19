@@ -29,7 +29,7 @@ In class we discussed this in terms of the regression line equation.  Here I am 
 
 ### Bivariate regression
 
-First, lets look at the bivariate case in which we have one independent variable.  With one independent variable and one dependent variable, the data can be viewed in a scatterplot.  A scatterplot is a simple, two-dimensional graph which shows each observation as a point which corresponds to that observation's independent and dependent variable values.  Below is a scatterplot of data from the Metod C survey with "General Trust" (higher values = more trust) as the independent variable along the x-axis, and "Attitude towards inequality" (higher values = belief we should reduce inequalities) as the dependent variable along the y-axis.  
+First, lets look at the bivariate case in which we have one independent variable.  With one independent variable and one dependent variable, the data can be viewed in a scatterplot.  A scatterplot is a simple, two-dimensional graph which shows each observation as a point which corresponds to that observation's values on the independent and dependent variable.  Below is a scatterplot of data from the Metod C survey with "General Trust" (higher values = more trust) as the independent variable along the x-axis, and "Attitude towards inequality" (higher values = belief we should reduce inequalities) as the dependent variable along the y-axis.  
 
 ```{r, echo = FALSE}
 Dataset <- read.csv("/home/dj-ubuntu/Documents/Webpage/3d visualization/data_subset.csv")
@@ -83,7 +83,7 @@ NOTE: I don't actually recommended creating this type of cube visualization if y
 
 ```{r, echo = FALSE, warning=FALSE}
 # 3d plot with plane, 3 discrete variables
-library(scatterplot3d)
+#library(scatterplot3d)
 library(rgl)
 plotid <- with(Dataset, plot3d(trust, ideology, inequality, type = "p",
                                  xlab = "General Trust", ylab = "Ideology", zlab = "Attitude to Inequality"))
@@ -187,7 +187,7 @@ rglwidget(elementId = "plot3drgl4")
 
 
 
-If you move the cube around to the side so that the democracy axis is facing forward you can see what is so special about dummy variables in multiple regression.  There are no points in the middle of the cube!  This is because dummy variables only have two levels of measurement, when the variable equals 1 and when it equals 2 (it doesn't matter if the variable is coded as 1 and 2 or as 0 and 1 - the result is the same.  It's coded as 1 and 2 here because that was necessary to get colour onto the points).  Therefore, points can only be placed on the front and backside of the cube.  We see also from this side that the slope of the plane is negative (democracy is coded higher than non-democracy), but since there are no data in the middle, the only two points of the plane that are of interest to interpret are the two edges.  This in effect means that the two edges are at two different heights in the cube and as such, represent two different levels of support for the president for democracies and non-democracies.  
+If you move the cube around to the side so that the democracy axis is facing forward you can see what is so special about dummy variables in multiple regression.  There are no points in the middle of the cube!  This is because dummy variables only have two possible values, when the variable equals 1 and when it equals 2 (it doesn't matter if the variable is coded as 1 and 2 or as 0 and 1 - the result is the same.  It's coded as 1 and 2 here because that was necessary to get colour onto the points).  Therefore, points can only be placed on the front and backside of the cube.  We see also from this side that the slope of the plane is negative (democracy is coded higher than non-democracy), but since there are no data in the middle, the only two points of the plane that are of interest to interpret are the two edges.  This in effect means that the two edges are at two different heights in the cube and as such, represent two different levels of support for the president for democracies and non-democracies.  
 
 
 So why two parallel lines?  Importantly, the plane is fit using information from all points simultaneously.  And by fitting the model we have forced the plane to be linear across all edges.  Turn the cube so that the military expenditure axis is facing you again.  As you see on the plane, the edge that runs across the front of the cube is sloping slightly downwards.  Also, the edge that runs across the back of the cube is sloping downwards at the exact same rate.  But the two edges are at different heights in the cube (which corresponds to the difference in means between the democratic and non-democratic countries).  Since there is nothing in the middle of the cube, we can effectively "cut out" the middle part which leaves two parallel lines.  The third dimension in your model, democracy, remains however as represented by the two colours.

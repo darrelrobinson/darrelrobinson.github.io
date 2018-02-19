@@ -2,7 +2,7 @@
 title: "R Projects"
 ---
 
-This section of my webpage is just a various collection of things I've done in R that I thought were interesting.  
+This section of my webpage is just a various collection of things I've done in R that I thought were interesting.  I've mostly done them for myself to learn a new technique or work with a new package
 
 
 ## [Personal webpage](https://github.com/darrelrobinson)
@@ -12,14 +12,20 @@ The first project, this webpage!  It's written entirely in RMarkdown and hosted 
 
 ## [A visualization of why dummy variables shift the intercept in linear regression](dummy.html)
 
-In the BA Research methods course at the Department of Government we introduce to students dummy variables in linear regression.  In class we demonstrate mathematically that dummy variables shift the intercept of the regression line by studying the regression line equation, but a visualization of why this is the case can be helpful so that students can see how this happens. In this project I use interactive 3D visualizations to demonstrate this concept.
+In the BA Research methods course at the Department of Government we introduce students to dummy variables in linear regression.  In class we demonstrate mathematically that dummy variables shift the intercept of the regression line by studying the regression line equation, but a visualization of why this is the case can be helpful so that students can see how this happens. In this project I use interactive 3D visualizations to demonstrate this concept.  
+
+The figures are built with the rgl package, click <a href="https://cran.r-project.org/web/packages/rgl/vignettes/rgl.html" target="_blank">here</a> for the documentation.
+
+
+
+
 
 
 ## An RShiny app to explore some of the World Values Survey
 
 When I read about <a href=https://shiny.rstudio.com/" target="_blank">RShiny</a> I felt I had to test it out.  What is RShiny?  It's a package that lets you build web apps in R to explore your data or build dashboards.  
 
-So I started looking for a project to work on.  One 
+I've only just started this project so check back later for updates.  
 
 
 
