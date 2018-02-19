@@ -4,4 +4,6 @@ title: "Darrel Robinson"
 
 Hi and welcome to my webpage (under construction!).  My name is Darrel Robinson and I am a PhD Candidate at the Department of Government at Uppsala University, and I am also affiliated with the Uppsala Center for Labor Studies.  I conduct my research on the formation of political attitudes and in my dissertation I focus on citizens' attitudes towards CCP rule in China.  
 
+This webpage is intended in part to be a research webpage where I present myself and my work, but also as a means of developing my R skills further.  
+
 I've only just started this page so check back soon for updates.  

@@ -1,0 +1,211 @@
+---
+title: "Why dummy independent variables shift the intercept in multiple regression"
+author: "Darrel Robinson"
+date: "February 6, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rgl)
+library(knitr)
+library(arm)
+knit_hooks$set(webgl = hook_webgl)
+setwd("/home/dj-ubuntu/Documents/Webpage/3d visualization/")
+rm(list = ls())
+set.seed(13435)
+x <- runif(80, 0, 20)
+y <- 15 + 3*x + rnorm(80,0,15)
+y[y<20] <- NA
+d_frame <- cbind("Military Expenditure" = x, "Support for Prez" = y)
+plot(x, y, xlab = "Military Expenditure", ylab = "Support for Prez")
+```
+
+## Visualizing Multiple Regression
+
+
+In class we discussed this in terms of the regression line equation.  Here I am going to show with some interactive visualizations how multiple regression works which will hopefully make clear why we end up with parallel regression lines in models in which we incorporate dummy variables as predictors (independent variables).  Interpretation is not the main focus of this write-up, I'm rather hoping that by seeing what happens in multiple regression, it will be easier to understand.
+
+
+### Bivariate regression
+
+First, lets look at the bivariate case in which we have one independent variable.  With one independent variable and one dependent variable, the data can be viewed in a scatterplot.  A scatterplot is a simple, two-dimensional graph which shows each observation as a point which corresponds to that observation's independent and dependent variable values.  Below is a scatterplot of data from the Metod C survey with "General Trust" (higher values = more trust) as the independent variable along the x-axis, and "Attitude towards inequality" (higher values = belief we should reduce inequalities) as the dependent variable along the y-axis.  
+
+```{r, echo = FALSE}
+Dataset <- read.csv("/home/dj-ubuntu/Documents/Webpage/3d visualization/data_subset.csv")
+plot(jitter(Dataset$trust), jitter(Dataset$inequality), pch = 20, cex = 0.5, 
+     xlab = "Trust", ylab = "Inequality")
+```
+
+
+When we fit a linear regression model to the data, what we are doing is summarizing the relationship between the two variables with a line.  We draw a line through the scatterplot that comes as close as possible to all of the data points by minimizing the sum of the squared errors (residuals).  Some points will be above the line, some will be below, and very few will actually be directly on the line.  But this line is as close as we can possibly come to all points on the scatterplot.
+
+
+```{r, echo = FALSE}
+plot(jitter(Dataset$trust), jitter(Dataset$inequality), pch = 20, cex = 0.5, 
+     xlab = "Trust", ylab = "Inequality")
+model <- lm(inequality ~ trust, data = Dataset)
+abline(model, col = "red", lty = "dashed", lwd = 2)
+```
+
+
+In R, the regression output table looks like this:
+
+
+```{r, echo = FALSE}
+summary(model)
+```
+
+
+The slope of the line is the value of the "Estimate" column which corresponds to "trust", our independent variable.  We interpret this slope as, for each one-unit increase in trust (general trust), we expect a ```r round(coef(model)[2],2)``` increase in inequality (attitude to inequality).  The trust estimate has a standard error of ```r round(sqrt(diag(vcov(model)))[2], 2)``` which yields a t-value of ```r round(coef(model)[2] / sqrt(diag(vcov(model)))[2], 2)```.  In this case the coefficient for trust is highly significant and we would reject the null hypothesis.  
+
+
+### Multiple regression - the trivariate case
+
+But as you know, rejecting the null hypothesis on the basis of a bivariate regression is not very convincing.  Specifically, we have not isolated for other potential variables which means that this relationship may be spurious.  In order to test for this, and also to determine if the effect of general trust on attitude towards inequality has any indirect effects, we need to control for other variables in our model.  We do so by including them as independent variables.  
+
+If we add a variable to our previous model we have fitted a multiple regression model (in this case, with one dependent variable and two independent variables we can call it a trivariate regression).  Let's add "Ideology" to our model as a control variable.  Here is a simplified regression output:
+
+
+```{r, echo = FALSE}
+model2 <- lm(inequality ~ trust + ideology, data = Dataset)
+display(model2)
+```
+
+With three variables we can no longer display our data as a simple scatterplot along two-dimensions because our model now has three dimensions, one for each variable.  A three-dimensional version of a square (as in scatterplot) is, of course, a cube.  We can think of our dependent variable as the height of the cube, one independent variable as the length of the cube, and the second independent variable as the width of the cube.  Effectively, we have added one axis to our simple scatterplot that we looked at before in the bivariate case.  
+
+What about our points though?  Well, we place them inside the cube now at the point in space which corresponds to that observations values along all three variables.  The height of the point in the cube will equal its value of the dependent variable, its position along the length axis of the cube will correspond to its value of the first independent variable, and its position along the width axis will corresponde to is value of the second independent variable.  Points will effectively 'fill' the space inside the cube.
+
+Here is an example.  Click and hold on the cube to move it around and see how the points are floating in the three dimensional space.  
+
+NOTE: I don't actually recommended creating this type of cube visualization if you use multiple regression in your c-thesis - this is intended for instructional purposes.  
+
+
+```{r, echo = FALSE, warning=FALSE}
+# 3d plot with plane, 3 discrete variables
+library(scatterplot3d)
+library(rgl)
+plotid <- with(Dataset, plot3d(trust, ideology, inequality, type = "p",
+                                 xlab = "General Trust", ylab = "Ideology", zlab = "Attitude to Inequality"))
+rglwidget(elementId = "plot3drgl1")
+```
+
+
+But now we can't simply fit a line that comes closest to all of the points because we have too many dimensions.  Instead we create a two-dimensional line, a plane, which cuts through the cube:
+
+
+```{r, echo = FALSE, warning=FALSE}
+# 3d plot with plane, 3 discrete variables
+coefs <- coef(model2)
+a <- coefs["trust"]
+b <- coefs["ideology"]
+c <- -1
+d <- coefs["(Intercept)"]
+plot3d(x=Dataset$trust, y = Dataset$ideology, z = Dataset$inequality, type = "p", site = 5,
+        xlab = "General Trust", ylab = "Ideology", zlab = "Attitude to Inequality")
+planes3d(a, b, c, d, alpha = 0.5)
+rglwidget(elementId = "plot3drgl2")
+```
+
+
+If you look at the cube with the trust axis facing you, you see that the slope of the plane along that axis is positive.  Higher values of trust are associated with points at greater heights in the cube which indicates that more trust leads to an increase in belief that we should reduce inequalities.  This corresponds to the positive regression coeffient in the summary output above.  If you look at the cube with the ideology axis facing you see that the plane slopes downwards to the left.  This means that as ideology increases (from left- to right-wing), Methods C students believe to a lesser degree that inequality should be reduced.  This again corresponds to the negative coefficient for ideology that we see in the regression output.  
+
+
+
+
+##Dummy variables - Seminar Question 3.4
+
+
+As we've talked about in the lectures and seminars, dummy variables have some special properties that allow us to avoid some of the issues with levels of measurement (skalnivåer).  
+
+One of the insights from question 4 in seminar 3 was that, if we include a dummy variable as a predictor (independent variable) in a multiple regression model, the outcome is equivalent to fitting two parallel lines - one for each level of the dummy variable.  The slope of the two lines remains the same, but the intercept shifts.  In order to show why this is the case, let's start again with the bivariate case.  
+
+
+### Figure 1
+
+Here is a rough approximation of the first figure from the seminar assignment in which we discussed a bivariate case.  You were asked to "guesstimate" a regression line based on a scatterplot of presidential support on military expenditure. It would appear that the relationship is positive, which was counter to our working hypothesis (see the seminar assignment if you need a refresher).  But we were concerned that we had omitted an important variable, democracy, which we added into figure 2.   
+
+```{r, echo = FALSE, warning = FALSE}
+setwd("/home/dj-ubuntu/Dropbox/teaching/Metod C/")
+set.seed(13435)
+x <- runif(50, 0, 20)
+y <- 15 + 1.67*x + rnorm(50,0,15)
+y[y<20] <- NA
+d_frame <- cbind("Military Expenditure" = x, "Support for Prez" = y)
+plot(x, y, xlab = "Military Expenditure", ylab = "Support for Prez")
+```
+
+```{r, echo = FALSE}
+dem <- ifelse(x > 15, 0, 1)
+#a couple other random dems...
+dem[40] <- 0
+dem[31] <- 0
+dem[43] <- 0
+dem[41] <- 0
+dem[37] <- 0
+
+dem <- dem + 1
+
+d_frame_2 <- data.frame(cbind(y, x, dem))
+```
+
+
+
+
+
+## Figure 2
+
+When we added the democracy dummy variable to the model, we presented the data in a scatterplot in which non-democracies were represented by black points, and democracies by white points.  
+
+
+```{r, echo = FALSE}
+
+#roughly the same as in the assignment
+plot(x, y, xlab = "Military Expenditure", ylab = "Support for Prez")
+points(d_frame_2$x[dem == 1], d_frame_2$y[dem == 1], pch = 20)
+```
+
+
+
+
+Here I show using 3d graphics the same data, but democracies are shown with red points and non-democracies in black (again, it's interactive so click and hold to move it around).  Below is a cube in which military expenditure and democracy make up the two dimensions along the bottom of the cube, and the height of the cube represents support for the president.  If you look at the cube with the military expenditure axis facing you, you see that the fitted plane slopes slightly downwards which corresponds to our weak negative relationship between military expenditure and support for president when controlling for democracy.  
+
+
+```{r, echo = FALSE, warning=FALSE}
+model3 <- lm(y ~ x + dem, data = d_frame_2)
+coefs3 <- coef(model3)
+a2 <- coefs3["x"]
+b2 <- coefs3["dem"]
+c2 <- -1
+d2 <- coefs3["(Intercept)"]
+plot3d(x = d_frame_2$x, y = d_frame_2$dem, z = d_frame_2$y, type = "p", col = d_frame_2$dem,
+                                 xlab = "Mili. Exp", ylab = "Dem", zlab = "Prez Supp")
+planes3d(a2, b2, c2, d2, alpha = 0.5)
+rglwidget(elementId = "plot3drgl4")
+```
+
+
+
+
+If you move the cube around to the side so that the democracy axis is facing forward you can see what is so special about dummy variables in multiple regression.  There are no points in the middle of the cube!  This is because dummy variables only have two levels of measurement, when the variable equals 1 and when it equals 2 (it doesn't matter if the variable is coded as 1 and 2 or as 0 and 1 - the result is the same.  It's coded as 1 and 2 here because that was necessary to get colour onto the points).  Therefore, points can only be placed on the front and backside of the cube.  We see also from this side that the slope of the plane is negative (democracy is coded higher than non-democracy), but since there are no data in the middle, the only two points of the plane that are of interest to interpret are the two edges.  This in effect means that the two edges are at two different heights in the cube and as such, represent two different levels of support for the president for democracies and non-democracies.  
+
+
+So why two parallel lines?  Importantly, the plane is fit using information from all points simultaneously.  And by fitting the model we have forced the plane to be linear across all edges.  Turn the cube so that the military expenditure axis is facing you again.  As you see on the plane, the edge that runs across the front of the cube is sloping slightly downwards.  Also, the edge that runs across the back of the cube is sloping downwards at the exact same rate.  But the two edges are at different heights in the cube (which corresponds to the difference in means between the democratic and non-democratic countries).  Since there is nothing in the middle of the cube, we can effectively "cut out" the middle part which leaves two parallel lines.  The third dimension in your model, democracy, remains however as represented by the two colours.
+
+
+
+
+```{r, echo = FALSE}
+plot(d_frame_2$x, d_frame_2$y, xlab = "Military Expenditure", ylab = "Support for Prez", type = "n")
+points(d_frame_2$x[dem == 1], d_frame_2$y[dem == 1], pch = 20)
+points(d_frame_2$x[dem == 2], d_frame_2$y[dem == 2], pch = 20, col = "red")
+abline(a = 49.2, b = -0.11, lty = "dashed", col = "black")
+abline(a = 49.2 - 15.54, b = -0.11, lty = "dashed", col = "red")
+```
+
+
+Model regression summary output:
+
+```{r, echo = FALSE}
+display(model3)
+```

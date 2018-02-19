@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -99,34 +99,34 @@ button.code-folding-btn:focus {
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
-  padding-top: 61px;
+  padding-top: 54px;
   padding-bottom: 40px;
 }
 /* offset scroll position for anchor links (for fixed navbar)  */
 .section h1 {
-  padding-top: 66px;
-  margin-top: -66px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 
 .section h2 {
-  padding-top: 66px;
-  margin-top: -66px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h3 {
-  padding-top: 66px;
-  margin-top: -66px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h4 {
-  padding-top: 66px;
-  margin-top: -66px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h5 {
-  padding-top: 66px;
-  margin-top: -66px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h6 {
-  padding-top: 66px;
-  margin-top: -66px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 </style>
 
@@ -189,8 +189,20 @@ $(document).ready(function () {
 <li>
   <a href="research.html">Research</a>
 </li>
-<li>
-  <a href="r_stuff.html">R Projects</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    R Projects
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://github.com/darrelrobinson">GitHub</a>
+    </li>
+    <li>
+      <a href="dummy.html">Visualizing dummy variables in linear regression</a>
+    </li>
+  </ul>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -207,7 +219,19 @@ $(document).ready(function () {
 
 
 <p>This section of my webpage is just a various collection of things I’ve done in R that I thought were interesting.</p>
-<p>The first example, this webpage! It’s written entirely in RMarkdown and hosted on github. <a href="http://nickstrayer.me/RMarkdown_Sites_tutorial/" target="_blank">This</a> blog post got me started so check it out if you’re interested in creating a page yourself with RMarkdown. Also, you can find my GitHub <a href="https://github.com/darrelrobinson" target="_blank">here</a> if you want to see what I’ve done.</p>
+<div id="personal-webpage" class="section level2">
+<h2><a href="https://github.com/darrelrobinson">Personal webpage</a></h2>
+<p>The first project, this webpage! It’s written entirely in RMarkdown and hosted on GitHub. <a href="http://nickstrayer.me/RMarkdown_Sites_tutorial/" target="_blank">This</a> blog post and <a href="http://www.lucymcgowan.com/index.html" target="_blank">Lucy D’Agostino McGowan’s</a> GitHub got me started so check them out if you’re interested in creating a page yourself with RMarkdown. Also, you can find my GitHub <a href="https://github.com/darrelrobinson" target="_blank">here</a> if you want to see what I’ve done.</p>
+</div>
+<div id="a-visualization-of-why-dummy-variables-shift-the-intercept-in-linear-regression" class="section level2">
+<h2><a href="dummy.html">A visualization of why dummy variables shift the intercept in linear regression</a></h2>
+<p>In the BA Research methods course at the Department of Government we introduce to students dummy variables in linear regression. In class we demonstrate mathematically that dummy variables shift the intercept of the regression line by studying the regression line equation, but a visualization of why this is the case can be helpful so that students can see how this happens. In this project I use interactive 3D visualizations to demonstrate this concept.</p>
+</div>
+<div id="an-rshiny-app-to-explore-some-of-the-world-values-survey" class="section level2">
+<h2>An RShiny app to explore some of the World Values Survey</h2>
+<p>When I read about <a href=https://shiny.rstudio.com/" target="_blank">RShiny</a> I felt I had to test it out. What is RShiny? It’s a package that lets you build web apps in R to explore your data or build dashboards.</p>
+<p>So I started looking for a project to work on. One</p>
+</div>
 
 
 
