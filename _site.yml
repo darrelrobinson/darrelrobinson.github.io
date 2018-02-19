@@ -18,4 +18,4 @@ navbar:
         href: dummy.html
 output:
   html_document:
-    theme: lumen
+    theme: sandstone
