@@ -1,16 +1,19 @@
-name: "darrels-website"
-output_dir: "."
+name: darrels-website
+output_dir: '.'
 navbar:
-  title: "Darrel Robinson's Website"
+  title: Darrel Robinson's Website
   right:
-    - text: "Home"
-      href: index.html
-    - text: "Research"
-      href: research.html
-    - text: "Teaching Experience"
-      href: teaching.html
-    - text: "R Projects"
-      href: r_stuff.html
+  - text: Home
+    href: index.html
+  - text: Research
+    href: research.html
+  - text: Teaching Experience
+    href: teaching.html
+  - text: R Projects
+    href: r_stuff.html
 output:
   html_document:
     theme: lumen
+    lib_dir: site_libs
+    self_contained: no
+

@@ -11,21 +11,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Web Scraping with R
 
-I've wanted to 
 
 
 My current research projects all use survey data so I don't have a research-specific example to start working on.  But, I have a one-and-a-half year old and when we were making our baby name list we, like everyone I think, searched online to find inspiration.  So, lists of baby names, a perfect example to try my hand at url-scraping and plotting of data from the web.  
 
+First we load the necessary packages.  Rvest 
 
-```{r}
+
+```{r, message= FALSE, error= FALSE}
 library(rvest)
-library(magrittr)
 library(ggplot2)
 library(dplyr)
 ``` 
 
 
-Next we need to define the url
+Next we need to define the urls to scrape.  I'm scraping data from the url below.  The yearly data are saved onto different pages - all pages have the base url, "https://svenskanamn.alltforforaldrar.se/namntoppen/", followed by the given year.  For example, the 2017 data is saved on "https://svenskanamn.alltforforaldrar.se/namntoppen/2017".  So we save the base url as text, then create a sequence of numbers from 1998 to 2017.  Pasting the base onto the sequence of numbers gives a vector of url names of all of the urls we want to collect data from.  
 
 ```{r}
 url <- "https://svenskanamn.alltforforaldrar.se/namntoppen/"
@@ -36,14 +36,7 @@ url_list <- paste0(url, year)
 
 
 
-Here's where all the work gets done.  This function does all the web scraping and data arranging.  
-
-The html_nodes() code bits reference the specific part of the webpage from where text gets pulled.  The SelectorGadget tool for Chrome is amazing for this if you, like me, don't know much about webpage construction and html.  
-
-The initial text extraction is rather messy so we need to get rid of the "\t", "\n", and "\r" pieces and the white space between words with the ```gsub()``` and ```trimws()``` calls.  Then drop the blank cells that appear at the bottom.  Lastly, the index object identifies all of the cells which say "Namn", they appeae at the top of each column on the webpage.  And then I subset based on girls and boys names.  The first nine lines of code in the function pull out the names from the table.  Then I simply repeat the process to get the yearly ranking and the number of children with each name.  
-
-
-
+Next is where all the work gets done.  This function does all the web scraping and data arranging.  
 
 
 ```{r}
@@ -91,6 +84,10 @@ get_data <- function(x){
 ```
 
 
+The html_nodes() code bits reference the specific part of the webpage from where text gets pulled.  The SelectorGadget tool for Chrome is amazing for this if you, like me, don't know much about webpage construction and html.  
+
+The initial text extraction is rather messy so we need to get rid of the "\t", "\n", and "\r" pieces and the white space between words with the ```gsub()``` and ```trimws()``` calls.  Then drop the blank cells that appear at the bottom.  Lastly, the index object identifies all of the cells which say "Namn", they appeae at the top of each column on the webpage.  And then I subset based on girls and boys names.  The first nine lines of code in the function pull out the names from the table.  Then I simply repeat the process to get the yearly ranking and the number of children with each name.  
+
 
 Now that I have defined the function, we need to call it. To do this we make use of ```lapply()```.  The apply functions let you call a specific function on a vector, dataframe, or list.  
 
@@ -107,8 +104,6 @@ name_data <- lapply(url_list, get_data)
 After the call to lapply() there is some final clean-up to do.  lapply() returns a list of objects, in this case data frames, but they are simply named 1, 2, 3, etc.  We update that quickly with the years for which we have data with the names() call.  Then we loop over all observations in the datasets and create a column with the given year.  We need this because in the next step I will combine the list of dataframes into a single dataframe, and we don't want to lose from which year the name belongs (this is an example of inefficient R programming but I couldn't figure out a better way to do it!).  
 
 
-After I combine the list of dataframes into a single dataframe with do.call(), I get rid of the row names, and reformat the Number and Rank columns to numeric variables.  That's it!  Now we have a dataframe with a column of names, yearly rank, number of children with that name, the sex of the child, and year of birth.  We can finally start visualizing our data.  
-
 
 ```{r}
 names(name_data) <- year
@@ -122,6 +117,14 @@ name_data <- do.call(rbind, name_data)
 row.names(name_data) <- NULL
 name_data$Number <- as.numeric(levels(name_data$Number))[name_data$Number]
 name_data$Rank <- as.numeric(levels(name_data$Rank))[name_data$Rank]
+```
+
+
+After I combine the list of dataframes into a single dataframe with do.call(), I get rid of the row names, and reformat the Number and Rank columns to numeric variables.  That's it!  Now we have a dataframe with a column of names, yearly rank, number of children with that name, the sex of the child, and year of birth.  We can finally start visualizing our data.  Let's have a quick look at the head and tail of the data:
+
+```{r}
+head(name_data, 10)
+tail(name_data, 10)
 ```
 
 

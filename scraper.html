@@ -212,28 +212,16 @@ $(document).ready(function () {
 
 <div id="web-scraping-with-r" class="section level2">
 <h2>Web Scraping with R</h2>
-<p>I’ve wanted to</p>
 <p>My current research projects all use survey data so I don’t have a research-specific example to start working on. But, I have a one-and-a-half year old and when we were making our baby name list we, like everyone I think, searched online to find inspiration. So, lists of baby names, a perfect example to try my hand at url-scraping and plotting of data from the web.</p>
-<pre class="r"><code>library(rvest)</code></pre>
-<pre><code>## Loading required package: xml2</code></pre>
-<pre class="r"><code>library(magrittr)
+<p>First we load the necessary packages. Rvest</p>
+<pre class="r"><code>library(rvest)
 library(ggplot2)
 library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<p>Next we need to define the url</p>
+<p>Next we need to define the urls to scrape. I’m scraping data from the url below. The yearly data are saved onto different pages - all pages have the base url, “<a href="https://svenskanamn.alltforforaldrar.se/namntoppen/" class="uri">https://svenskanamn.alltforforaldrar.se/namntoppen/</a>”, followed by the given year. For example, the 2017 data is saved on “<a href="https://svenskanamn.alltforforaldrar.se/namntoppen/2017" class="uri">https://svenskanamn.alltforforaldrar.se/namntoppen/2017</a>”. So we save the base url as text, then create a sequence of numbers from 1998 to 2017. Pasting the base onto the sequence of numbers gives a vector of url names of all of the urls we want to collect data from.</p>
 <pre class="r"><code>url &lt;- &quot;https://svenskanamn.alltforforaldrar.se/namntoppen/&quot;
 year &lt;- seq(1998, 2017, 1) %&gt;% as.character()
 url_list &lt;- paste0(url, year)</code></pre>
-<p>Here’s where all the work gets done. This function does all the web scraping and data arranging.</p>
-<p>The html_nodes() code bits reference the specific part of the webpage from where text gets pulled. The SelectorGadget tool for Chrome is amazing for this if you, like me, don’t know much about webpage construction and html.</p>
-<p>The initial text extraction is rather messy so we need to get rid of the “”, “”, and “” pieces and the white space between words with the <code>gsub()</code> and <code>trimws()</code> calls. Then drop the blank cells that appear at the bottom. Lastly, the index object identifies all of the cells which say “Namn”, they appeae at the top of each column on the webpage. And then I subset based on girls and boys names. The first nine lines of code in the function pull out the names from the table. Then I simply repeat the process to get the yearly ranking and the number of children with each name.</p>
+<p>Next is where all the work gets done. This function does all the web scraping and data arranging.</p>
 <pre class="r"><code>get_data &lt;- function(x){
   namn &lt;- x %&gt;% read_html() %&gt;% html_nodes(&#39;td:nth-child(3)&#39;) %&gt;% html_text()
   namn &lt;- gsub(&quot;\t&quot;,&quot;&quot;,namn)
@@ -275,11 +263,12 @@ url_list &lt;- paste0(url, year)</code></pre>
          pojkar = as.data.frame(cbind(&quot;Name&quot; = pojknamn, &quot;Rank&quot; = pojkrank, &quot;Number&quot; = pojkantal, &quot;Gender&quot; = &quot;Boy&quot;)))
         )
 }</code></pre>
+<p>The html_nodes() code bits reference the specific part of the webpage from where text gets pulled. The SelectorGadget tool for Chrome is amazing for this if you, like me, don’t know much about webpage construction and html.</p>
+<p>The initial text extraction is rather messy so we need to get rid of the “”, “”, and “” pieces and the white space between words with the <code>gsub()</code> and <code>trimws()</code> calls. Then drop the blank cells that appear at the bottom. Lastly, the index object identifies all of the cells which say “Namn”, they appeae at the top of each column on the webpage. And then I subset based on girls and boys names. The first nine lines of code in the function pull out the names from the table. Then I simply repeat the process to get the yearly ranking and the number of children with each name.</p>
 <p>Now that I have defined the function, we need to call it. To do this we make use of <code>lapply()</code>. The apply functions let you call a specific function on a vector, dataframe, or list.</p>
 <p>An alternative to this set-up in which I define a function and call lapply would be to define a for loop around the above code and loop over all of the elements in url_list. While this might be the preferred way of coding in other languages, as I understand, this generally leads to more inefficient code in R because R is designed to work with functions. This is what is meant when people say that R is a functional programming language.</p>
 <pre class="r"><code>name_data &lt;- lapply(url_list, get_data)</code></pre>
 <p>After the call to lapply() there is some final clean-up to do. lapply() returns a list of objects, in this case data frames, but they are simply named 1, 2, 3, etc. We update that quickly with the years for which we have data with the names() call. Then we loop over all observations in the datasets and create a column with the given year. We need this because in the next step I will combine the list of dataframes into a single dataframe, and we don’t want to lose from which year the name belongs (this is an example of inefficient R programming but I couldn’t figure out a better way to do it!).</p>
-<p>After I combine the list of dataframes into a single dataframe with do.call(), I get rid of the row names, and reformat the Number and Rank columns to numeric variables. That’s it! Now we have a dataframe with a column of names, yearly rank, number of children with that name, the sex of the child, and year of birth. We can finally start visualizing our data.</p>
 <pre class="r"><code>names(name_data) &lt;- year
 
 for(i in 1:length(name_data)){
@@ -291,6 +280,31 @@ name_data &lt;- do.call(rbind, name_data)
 row.names(name_data) &lt;- NULL
 name_data$Number &lt;- as.numeric(levels(name_data$Number))[name_data$Number]
 name_data$Rank &lt;- as.numeric(levels(name_data$Rank))[name_data$Rank]</code></pre>
+<p>After I combine the list of dataframes into a single dataframe with do.call(), I get rid of the row names, and reformat the Number and Rank columns to numeric variables. That’s it! Now we have a dataframe with a column of names, yearly rank, number of children with that name, the sex of the child, and year of birth. We can finally start visualizing our data. Let’s have a quick look at the head and tail of the data:</p>
+<pre class="r"><code>head(name_data, 10)</code></pre>
+<pre><code>##       Name Rank Number Gender Year
+## 1     Emma    1   1468   Girl 1998
+## 2    Julia    2   1171   Girl 1998
+## 3     Elin    3   1043   Girl 1998
+## 4   Amanda    4   1037   Girl 1998
+## 5    Hanna    5   1006   Girl 1998
+## 6   Linnéa    6    936   Girl 1998
+## 7  Matilda    7    847   Girl 1998
+## 8    Wilma    8    838   Girl 1998
+## 9      Moa    9    780   Girl 1998
+## 10     Ida   10    749   Girl 1998</code></pre>
+<pre class="r"><code>tail(name_data, 10)</code></pre>
+<pre><code>##            Name Rank Number Gender Year
+## 4001      Simon   91    166    Boy 2017
+## 4002    Nicolas   92    165    Boy 2017
+## 4003      Folke   93    158    Boy 2017
+## 4004      David   94    157    Boy 2017
+## 4005 Maximilian   94    157    Boy 2017
+## 4006       Thor   96    145    Boy 2017
+## 4007     Milian   97    142    Boy 2017
+## 4008       Levi   98    141    Boy 2017
+## 4009       Vide   98    141    Boy 2017
+## 4010        Neo  100    139    Boy 2017</code></pre>
 <p>Which names were the most popular over the last two decades? Let’s look at the top 25 over all of the years. William, Oscar, and Liam are the most common names for Swedish boys in the last 20 years, and Alice, Alicia, and Olivia are the most popular for girls. The figures below show the most popular 25 names for boys and girls in a horizontal bar chart.</p>
 <pre class="r"><code>name_data %&gt;% 
   dplyr::filter(Gender == &quot;Boy&quot;) %&gt;%
@@ -301,7 +315,7 @@ name_data$Rank &lt;- as.numeric(levels(name_data$Rank))[name_data$Rank]</code></
   ggplot() +
   geom_col(aes(x = reorder(Name, Total), y = Total), fill = &quot;forest green&quot;) +
   coord_flip()</code></pre>
-<p><img src="scraper_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="scraper_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>name_data %&gt;% 
   dplyr::filter(Gender == &quot;Girl&quot;) %&gt;%
   dplyr::group_by(Name) %&gt;% 
@@ -311,7 +325,7 @@ name_data$Rank &lt;- as.numeric(levels(name_data$Rank))[name_data$Rank]</code></
   ggplot() +
   geom_col(aes(x = reorder(Name, Total), y = Total), fill = &quot;navy blue&quot;) +
   coord_flip()</code></pre>
-<p><img src="scraper_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<p><img src="scraper_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
 <p>Another question, how stable are the top names? Have Alice, Alicia, and Olivia always been popular names or were they simply really popular in some years but not at all in others? Are girls names more stable than boys?</p>
 <p>To get an idea of this we can plot the development of names over time. Here I subset on the top-ten names from 2017 and plot they over time for girls and boys. Here are the girls.</p>
 <pre class="r"><code>top_girl_names &lt;- name_data %&gt;% 
@@ -327,7 +341,7 @@ name_data[which(name_data$Name %in% unique(top_girl_names$Name)),] %&gt;%
   guides(color = guide_legend(reverse = T)) +
   scale_y_reverse(breaks = c(1,100)) + 
   scale_x_discrete(breaks = c(1998,2017))</code></pre>
-<p><img src="scraper_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="scraper_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>And the boys:</p>
 <pre class="r"><code>top_boy_names &lt;- name_data %&gt;% 
   dplyr::filter(Gender == &quot;Boy&quot;, Year == 2017) %&gt;%
@@ -342,7 +356,7 @@ name_data[which(name_data$Name %in% unique(top_boy_names$Name)),] %&gt;%
   guides(color = guide_legend(reverse = T)) +
   scale_y_reverse(breaks = c(1,50, 90)) + 
   scale_x_discrete(breaks = c(1998,2017))</code></pre>
-<p><img src="scraper_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="scraper_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Boys names seem to be much more consistent than girls. All but two of the boys names, Liam and Noah, have been quite popular throughout the entire period placing among the top 50 names in each year, but all ten names were ranked in every year of the data. And at the top there are a lot of nearly horizontal trend lines among the most popular names. For the girls though, there is much more movement. 6 names were outside of the top 50 at the beginning of the period, and two names weren’t even ranked until later dates. We also don’t see the same consistency in the top names - nearly all of the names seem to be trending upwards as we move to the right in the figure. The popular boys names of 2017 have been consistently popular throughout the last 20 years whereas the popular girls names of 2017 seem have gained their popularity more recently.</p>
 </div>
 

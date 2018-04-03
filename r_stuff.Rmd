@@ -2,7 +2,7 @@
 title: "R Projects"
 ---
 
-This section of my webpage is just a various collection of things I've done in R that I thought were interesting.  I've mostly done them for myself to learn a new technique or work with a new package
+This section of my webpage is just a various collection of things I've done in R that I thought were interesting.  I've mostly done them for myself to learn a new technique or work with a new package and I've uploaded them here to save them.  
 
 
 ## [Personal webpage](https://github.com/darrelrobinson)
@@ -19,6 +19,7 @@ The figures are built with the rgl package, click <a href="https://cran.r-projec
 
 ## [Webscraping with R - Exploring popular baby names in Sweden](scraper.html)
 
+Ever wondered how to scrape a webpage and analyze the data?  The internet is full of interesting data and I'm hoping to incorporate these kind of things into my research in the future.  In this post I use the Rvest package to extract name data and visualize some trends.  
 
 
 
