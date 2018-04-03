@@ -17,15 +17,17 @@ In the BA Research methods course at the Department of Government we introduce s
 The figures are built with the rgl package, click <a href="https://cran.r-project.org/web/packages/rgl/vignettes/rgl.html" target="_blank">here</a> for the documentation.
 
 
+## [Webscraping with R - Exploring popular baby names in Sweden](scraper.html)
 
 
 
 
-## An RShiny app to explore some of the World Values Survey
+## An RShiny app to explore some of the China General Social Survey
 
-When I read about <a href=https://shiny.rstudio.com/" target="_blank">RShiny</a> I felt I had to test it out.  What is RShiny?  It's a package that lets you build web apps in R to explore your data or build dashboards.  
+I use the CGSS in my dissertation but it's not a very accessible database.  1) it's only in Chinese so I am one of the few (the only that I know) non-Chinese scholars using it.  2) it doesn't have an online analysis like other large survey projects so the only way to get an idea of what is in the dataset is to apply for access and start exploring (this is made more difficult because of point 1 if you, like me, don't speak Chinese).  So, I am working on the first data explorer for the CGSS.  Coming soon.
 
-I've only just started this project so check back later for updates.  
+
+
 
 
 
