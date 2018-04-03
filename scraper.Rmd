@@ -77,8 +77,10 @@ get_data <- function(x){
   pojkantal <- antal[(index[length(index)] + 1):length(antal)]
   
   
-  return(rbind(flickor = as.data.frame(cbind("Name" = flicknamn, "Rank" = flickrank, "Number" = flickantal, "Gender" = "Girl")),
-         pojkar = as.data.frame(cbind("Name" = pojknamn, "Rank" = pojkrank, "Number" = pojkantal, "Gender" = "Boy")))
+  return(rbind(flickor = as.data.frame(cbind("Name" = flicknamn, "Rank" = flickrank, 
+                                             "Number" = flickantal, "Gender" = "Girl")),
+         pojkar = as.data.frame(cbind("Name" = pojknamn, "Rank" = pojkrank, 
+                                      "Number" = pojkantal, "Gender" = "Boy")))
         )
 }
 ```
@@ -86,8 +88,10 @@ get_data <- function(x){
 
 The html_nodes() code bits reference the specific part of the webpage from where text gets pulled.  The SelectorGadget tool for Chrome is amazing for this if you, like me, don't know much about webpage construction and html.  
 
-The initial text extraction is rather messy so we need to get rid of the "\t", "\n", and "\r" pieces and the white space between words with the ```gsub()``` and ```trimws()``` calls.  Then drop the blank cells that appear at the bottom.  Lastly, the index object identifies all of the cells which say "Namn", they appeae at the top of each column on the webpage.  And then I subset based on girls and boys names.  The first nine lines of code in the function pull out the names from the table.  Then I simply repeat the process to get the yearly ranking and the number of children with each name.  
+The initial text extraction is rather messy so we need to get rid of the "\\\\t", "\\\\n", and "\\\\r" pieces and the white space between words with the ```gsub()``` and ```trimws()``` calls.  Then drop the blank cells that appear at the bottom.  Lastly, the index object identifies all of the cells which say "Namn", they appeae at the top of each column on the webpage.  And then I subset based on girls and boys names.  The first nine lines of code in the function pull out the names from the table.  Then I simply repeat the process to get the yearly ranking and the number of children with each name.  
 
+
+### Get some data! Call the function
 
 Now that I have defined the function, we need to call it. To do this we make use of ```lapply()```.  The apply functions let you call a specific function on a vector, dataframe, or list.  
 
@@ -127,6 +131,9 @@ head(name_data, 10)
 tail(name_data, 10)
 ```
 
+
+
+### And some data viz
 
 
 Which names were the most popular over the last two decades?  Let's look at the top 25 over all of the years. William, Oscar, and Liam are the most common names for Swedish boys in the last 20 years, and Alice, Alicia, and Olivia are the most popular for girls.  The figures below show the most popular 25 names for boys and girls in a horizontal bar chart.  
