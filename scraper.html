@@ -312,7 +312,7 @@ name_data$Rank &lt;- as.numeric(levels(name_data$Rank))[name_data$Rank]</code></
 </div>
 <div id="and-some-data-viz" class="section level3">
 <h3>And some data viz</h3>
-<p>Which names were the most popular over the last two decades? Let’s look at the top 25 over all of the years. William, Oscar, and Liam are the most common names for Swedish boys in the last 20 years, and Alice, Alicia, and Olivia are the most popular for girls. The figures below show the most popular 25 names for boys and girls in a horizontal bar chart.</p>
+<p>Which names were the most popular over the last two decades? Let’s look at the top 25 over all of the years. Oscar, William, and Lucas are the most common names for Swedish boys in the last 20 years, and Emma, Julia, and Maja are the most popular for girls. The figures below show the most popular 25 names for boys and girls in a horizontal bar chart.</p>
 <pre class="r"><code>name_data %&gt;% 
   dplyr::filter(Gender == &quot;Boy&quot;) %&gt;%
   dplyr::group_by(Name) %&gt;% 
@@ -333,7 +333,7 @@ name_data$Rank &lt;- as.numeric(levels(name_data$Rank))[name_data$Rank]</code></
   geom_col(aes(x = reorder(Name, Total), y = Total), fill = &quot;navy blue&quot;) +
   coord_flip()</code></pre>
 <p><img src="scraper_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
-<p>Another question, how stable are the top names? Have Alice, Alicia, and Olivia always been popular names or were they simply really popular in some years but not at all in others? Are girls names more stable than boys?</p>
+<p>Another question, how stable are the top names? Have Emma, Julia, and Maja always been popular names or were they simply really popular in some years but not at all in others? Are girls names more stable than boys?</p>
 <p>To get an idea of this we can plot the development of names over time. Here I subset on the top-ten names from 2017 and plot they over time for girls and boys. Here are the girls.</p>
 <pre class="r"><code>top_girl_names &lt;- name_data %&gt;% 
   dplyr::filter(Gender == &quot;Girl&quot;, Year == 2017) %&gt;%
@@ -346,7 +346,7 @@ name_data[which(name_data$Name %in% unique(top_girl_names$Name)),] %&gt;%
   ggplot(aes(x = Year, y = Rank, col = Name, group = Name)) +
   geom_line() + 
   guides(color = guide_legend(reverse = T)) +
-  scale_y_reverse(breaks = c(1,100)) + 
+  scale_y_reverse(breaks = c(1,50,90)) + 
   scale_x_discrete(breaks = c(1998,2017))</code></pre>
 <p><img src="scraper_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>And the boys:</p>
