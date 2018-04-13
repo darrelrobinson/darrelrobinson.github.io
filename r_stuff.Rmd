@@ -4,10 +4,14 @@ title: "R Projects"
 
 This section of my webpage is just a various collection of things I've done in R that I thought were interesting.  I've mostly done them for myself to learn a new technique or work with a new package and I've uploaded them here to save them.  
 
+<br>
 
 ## [Personal webpage](https://github.com/darrelrobinson)
 
 The first project, this webpage!  It's written entirely in RMarkdown and hosted on GitHub. <a href="http://nickstrayer.me/RMarkdown_Sites_tutorial/" target="_blank">This</a> blog post and <a href="http://www.lucymcgowan.com/index.html" target="_blank">Lucy D'Agostino McGowan's</a> GitHub got me started so check them out if you're interested in creating a page yourself with RMarkdown.  Also, you can find my GitHub <a href="https://github.com/darrelrobinson" target="_blank">here</a> if you want to see what I've done.  
+
+
+<br>
 
 
 ## [A visualization of why dummy variables shift the intercept in linear regression](dummy.html)
@@ -16,12 +20,14 @@ In the BA Research methods course at the Department of Government we introduce s
 
 The figures are built with the rgl package, click <a href="https://cran.r-project.org/web/packages/rgl/vignettes/rgl.html" target="_blank">here</a> for the documentation.
 
+<br>
 
 ## [Webscraping with R - Exploring popular baby names in Sweden](scraper.html)
 
 Ever wondered how to scrape a webpage and analyze the data?  The internet is full of interesting data and I'm hoping to incorporate these kind of things into my research in the future.  In this post I use the Rvest package to extract name data and visualize some trends.  
 
 
+<br>
 
 ## An RShiny app to explore some of the China General Social Survey
 

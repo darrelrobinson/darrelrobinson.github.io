@@ -60,7 +60,7 @@ summary(model)
 The slope of the line is the value of the "Estimate" column which corresponds to "trust", our independent variable.  We interpret this slope as, for each one-unit increase in trust (general trust), we expect a ```r round(coef(model)[2],2)``` increase in inequality (attitude to inequality).  The trust estimate has a standard error of ```r round(sqrt(diag(vcov(model)))[2], 2)``` which yields a t-value of ```r round(coef(model)[2] / sqrt(diag(vcov(model)))[2], 2)```.  In this case the coefficient for trust is highly significant and we would reject the null hypothesis.  
 
 
-### Multiple regression - the trivariate case
+### Multiple regression - Adding a control variable
 
 But as you know, rejecting the null hypothesis on the basis of a bivariate regression is not very convincing.  Specifically, we have not isolated for other potential variables which means that this relationship may be spurious.  In order to test for this, and also to determine if the effect of general trust on attitude towards inequality has any indirect effects, we need to control for other variables in our model.  We do so by including them as independent variables.  
 
@@ -72,7 +72,7 @@ model2 <- lm(inequality ~ trust + ideology, data = Dataset)
 display(model2)
 ```
 
-With three variables we can no longer display our data as a simple scatterplot along two-dimensions because our model now has three dimensions, one for each variable.  A three-dimensional version of a square (as in scatterplot) is, of course, a cube.  We can think of our dependent variable as the height of the cube, one independent variable as the length of the cube, and the second independent variable as the width of the cube.  Effectively, we have added one axis to our simple scatterplot that we looked at before in the bivariate case.  
+With three variables we can no longer display our data as a simple scatterplot along two-dimensions because our model now has three dimensions, one for each variable.  A three-dimensional version of a square (as in scatterplot) is, of course, a cube.  We can think of our dependent variable as the height of the cube, one independent variable as the width of the cube, and the second independent variable as the depth of the cube.  Effectively, we have added one axis to our simple scatterplot that we looked at before in the bivariate case.  
 
 What about our points though?  Well, we place them inside the cube now at the point in space which corresponds to that observations values along all three variables.  The height of the point in the cube will equal its value of the dependent variable, its position along the length axis of the cube will correspond to its value of the first independent variable, and its position along the width axis will corresponde to is value of the second independent variable.  Points will effectively 'fill' the space inside the cube.
 
