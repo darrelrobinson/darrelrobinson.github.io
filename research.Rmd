@@ -12,13 +12,13 @@ surveys. However, when measuring regime support in closed political systems ther
 that individuals are less than forthright due to fear that their opinions may be made known to the
 public or the authorities. In order to test this assumption, we conducted a novel web-based survey
 in China in which we included four list experiments of commonly used items in the comparative
-literature on regime support. We find systematic bias for all four measures as a result of selfcensorship;
+literature on regime support. We find systematic bias for all four measures as a result of self-censorship;
 substantially more individuals state that they support the regime with direct questioning
 than do when presented with our anonymous, indirect list experiments. The level of self-censorship,
-which ranges from 16 to 22 percentage points, is considerably higher than previously thought. Selfcensorship
+which ranges from 16 to 22 percentage points, is considerably higher than previously thought. Self-censorship
 is further most prevalent among the wealthy, urban, female and younger respondents.
 These findings indicate that prior studies that have found high levels of support for the Chinese
-regime using these particular measures likely overestimate the true level of support. Further, crossnational
+regime using these particular measures likely overestimate the true level of support. Further, cross-national
 studies which compare popular support across regime type may be systematically biased if
 responses are not subject to the same level of falsification across regime types.
 
