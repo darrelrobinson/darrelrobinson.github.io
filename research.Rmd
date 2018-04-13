@@ -23,3 +23,12 @@ studies which compare popular support across regime type may be systematically b
 responses are not subject to the same level of falsification across regime types.
 
 Full working paper found <a href="https://www.v-dem.net/media/filer_public/2d/bc/2dbc44aa-5558-4972-9e01-f4ca144586a1/v-dem_working_paper_2018_66.pdf" target="_blank">here</a>.
+
+<br>
+
+## Learning Politics: Revisiting the compensation hypothesis between education and political knowledge
+
+Abstract: In spite of a robust correlation between education and political knowledge recent results from matching and quasi-experimental studies have been inconsistent.  I argue that family background of students can help to explain these diverging findings.  I test the compensation hypothesis that education should affect students that come from homes with low levels of political discussion to a greater degree with a twin-matching design.  Previous studies of the compensation hypothesis are limited in two respects – they are open to social desirability bias in the dependent variable, or rely on proxies for political discussion in the home.  This study addresses these two limitations.  I find that education has a positive effect on political knowledge independent of family background and genetics, but only among those that are less exposed to political discussion in the home.  Among those who frequently discussed politics with family during their upbringing, education does not lead to greater political knowledge.  
+
+Currently under review.
+
