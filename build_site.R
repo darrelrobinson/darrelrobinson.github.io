@@ -8,4 +8,9 @@ setwd("/home/dj-ubuntu/Documents/Webpage/personal_webpage")
 rmarkdown::render_site()
 
 #cerulean - blue, cosmo - black, flatly - dark gray, journal - white, readable - white with blue menu text, spacelab - grey banner, united - red
-# yet - nice black, sandstone - also nice, simplex - nice white, lumen - greyish
+# yeti - nice black, sandstone - also nice, simplex - nice white, lumen - greyish
+
+
+#1 cerulean
+#2 yeti
+#3 sandstone

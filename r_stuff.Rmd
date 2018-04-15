@@ -6,34 +6,42 @@ This section of my webpage is just a various collection of things I've done in R
 
 <br>
 
-## [Personal webpage](https://github.com/darrelrobinson)
 
-The first project, this webpage!  It's written entirely in RMarkdown and hosted on GitHub. <a href="http://nickstrayer.me/RMarkdown_Sites_tutorial/" target="_blank">This</a> blog post and <a href="http://www.lucymcgowan.com/index.html" target="_blank">Lucy D'Agostino McGowan's</a> GitHub got me started so check them out if you're interested in creating a page yourself with RMarkdown.  Also, you can find my GitHub <a href="https://github.com/darrelrobinson" target="_blank">here</a> if you want to see what I've done.  
+## An RShiny app to explore some of the China General Social Survey
 
-
-<br>
+I use the CGSS in my dissertation but it's not a very accessible database.  1) it's only in Chinese so I am one of the few (the only that I know) non-Chinese scholars using it.  2) it doesn't have online analysis like other large survey projects so the only way to get an idea of what is in the dataset is to apply for access and start exploring (this is made more difficult because of point 1).  So, I am working on the first data explorer for (some of) the CGSS.  Coming soon.
 
 
-## [A visualization of why dummy variables shift the intercept in linear regression](dummy.html)
+---
+
+## [A 3D visualization of how dummy variables shift the intercept in linear regression (for Methods C students)](dummy.html)
 
 In the BA Research methods course at the Department of Government we introduce students to dummy variables in linear regression.  In class we demonstrate mathematically that dummy variables shift the intercept of the regression line by studying the regression line equation, but a visualization of why this is the case can be helpful so that students can see how this happens. In this project I use interactive 3D visualizations to demonstrate this concept.  
 
 The figures are built with the rgl package, click <a href="https://cran.r-project.org/web/packages/rgl/vignettes/rgl.html" target="_blank">here</a> for the documentation.
 
-<br>
+
+
+---
+
 
 ## [Webscraping with R - Exploring popular baby names in Sweden](scraper.html)
 
 Ever wondered how to scrape a webpage and analyze the data?  The internet is full of interesting data and I'm hoping to incorporate these kind of things into my research in the future.  In this post I use the Rvest package to extract name data and visualize some trends.  
 
 
-<br>
 
-## An RShiny app to explore some of the China General Social Survey
-
-I use the CGSS in my dissertation but it's not a very accessible database.  1) it's only in Chinese so I am one of the few (the only that I know) non-Chinese scholars using it.  2) it doesn't have online analysis like other large survey projects so the only way to get an idea of what is in the dataset is to apply for access and start exploring (this is made more difficult because of point 1 if you, like me, don't speak Chinese).  So, I am working on the first data explorer for the CGSS.  Coming soon.
+---
 
 
+## [Personal webpage](https://github.com/darrelrobinson)
+
+And of course, this webpage!  It's written in RMarkdown and hosted on GitHub. <a href="http://nickstrayer.me/RMarkdown_Sites_tutorial/" target="_blank">This</a> blog post and <a href="http://www.lucymcgowan.com/index.html" target="_blank">Lucy D'Agostino McGowan's</a> GitHub got me started so check them out if you're interested in creating a page yourself with RMarkdown.  Also, you can find my GitHub <a href="https://github.com/darrelrobinson" target="_blank">here</a> if you want to see what I've done.  
+
+
+
+
+---
 
 
 
