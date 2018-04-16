@@ -25,7 +25,8 @@ responses are not subject to the same level of falsification across regime types
 
 Full working paper found <a href="https://www.v-dem.net/media/filer_public/2d/bc/2dbc44aa-5558-4972-9e01-f4ca144586a1/v-dem_working_paper_2018_66.pdf" target="_blank">here</a>.
 
-<br>
+
+---
 
 ## Learning Politics: Revisiting the compensation hypothesis between education and political knowledge
 
@@ -33,7 +34,7 @@ Abstract: In spite of a robust correlation between education and political knowl
 
 Currently under review.
 
-<br>
+---
 
 ## Education Opportunity and Support for Authoritarian Rule: Evidence from the expansion of higher education in China
 
