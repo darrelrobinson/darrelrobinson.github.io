@@ -1,0 +1,14 @@
+---
+title: "Darrel Robinson"
+---
+
+Hi and welcome to my webpage (under construction)!  My name is Darrel Robinson and I am a PhD Candidate at the Department of Government at Uppsala University, and I am also affiliated with the Uppsala Center for Labor Studies.  I conduct my research on the formation of political attitudes with a particular focus on formal education and how its effect can be conditioned by the political context in which it is undertaken.  My studies exploit education reforms or use matching designs to try to isolate for causal effects, and I have also conducted some work with survey experiments.  
+
+This is intended in part to be a research webpage where I present myself and my work, but also as a way to learn more R and store some of the projects that I've made while learning new techniques and code.  Check out my [Research](research.html) page for the former and my [R Projects](r_stuff.html) page for some of the latter.  
+
+```{r fig.width=4, fig.height=3, fig.align = "left", echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("photo for application.png")
+grid.raster(img)
+```
