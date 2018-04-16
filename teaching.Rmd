@@ -11,7 +11,7 @@ title: "Teaching Experience"
     
 See the course description <a href="http://www.uu.se/en/admissions/master/selma/kursplan/?kKod=2SK079" target="_blank">here</a>
 
-<br>
+---
     
 ## Political Science A (first-year BA) - Citizens and Society
 
