@@ -9,7 +9,7 @@ This page is just a various collection of things I've done in R that I thought w
 
 ## [A simple trading algorithm and stock dashboard with RShiny](https://darrelrobinson.shinyapps.io/stock_dashboard/)
 
-This is a very simple algorithm and dashboard I use to follow stocks.  The "Buy" and "Sell" signals are based on RSI and Bollinger Bands and can be used as entry and exit points.  The app is written with RShiny and the data is collected and visualized using the quantmod package.  The code can be found at my <a href="https://github.com/darrelrobinson" target="_blank">GitHub profile</a>.
+This is a very simple algorithm and dashboard I use to follow stocks.  The "Buy" and "Sell" signals are based on RSI and Bollinger Bands.  The app is written with RShiny and the data is collected and visualized using the quantmod package.  The code can be found at my <a href="https://github.com/darrelrobinson" target="_blank">GitHub profile</a>.
 
 
 ---
