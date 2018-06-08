@@ -19,7 +19,7 @@ title: ""
 
 </style>
 
-```{r packages, echo = FALSE}
+```{r packages, echo = FALSE, include = FALSE}
 library(png)
 library(knitr)
 img <- readPNG("/home/dj-ubuntu/Pictures/theo.png", native = TRUE, info = TRUE)
