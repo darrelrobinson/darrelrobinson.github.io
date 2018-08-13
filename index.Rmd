@@ -56,9 +56,16 @@ This is intended in part to be a research webpage where I present myself and my 
 
 <div class = "container">
 
-darrel.robinson@statsvet.uu.se
+```{r fig.width=3, fig.height=2.25, fig.align = "left", echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("photo for application.png")
+grid.raster(img)
+```
 
-<a href="https://www.linkedin.com/in/darrel-robinson-25776436/" target="_blank">LinkedIn</a>
+<span style="color:white">aaaaaaa</span>darrel.robinson@statsvet.uu.se
+
+<span style="color:white">aaaaaaa</span><a href="https://www.linkedin.com/in/darrel-robinson-25776436/" target="_blank">LinkedIn</a>
 
 </div>
 </div>
