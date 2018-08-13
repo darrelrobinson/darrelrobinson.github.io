@@ -6,8 +6,13 @@ This page is just a various collection of things I've done in R that I thought w
 
 <br>
 
+## [Logistic regression 'by-hand' in R](logistic.html)
 
-## [A (very basic) trading algorithm and stock dashboard with RShiny](https://darrelrobinson.shinyapps.io/stock_dashboard/)
+A short break down of logistic regression I wrote when I was learning the method.  I don't like applying methods without understanding some basics of the function and how to program one myself so I always try to dig a little bit beyond a simple conceptual understanding.  
+
+---
+
+## [A simple trading algorithm and stock dashboard with RShiny](https://darrelrobinson.shinyapps.io/stock_dashboard/)
 
 This is a very basic algorithm and dashboard I use to follow stocks.  The dashboard can be used to view and analyze trends whereas the "Buy" and "Sell" signals are based on RSI and Bollinger Band values.  The tool can be used for short-term trading or for timing entry points with long-term strategies.  Feel free to use it or copy and develop it further with your own strategies.  
 

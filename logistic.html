@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Darrel Robinson" />
+
+
+<title>Logistic regression by hand in R</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Darrel Robinson's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="research.html">Research</a>
+</li>
+<li>
+  <a href="teaching.html">Teaching Experience</a>
+</li>
+<li>
+  <a href="r_stuff.html">R Projects</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Logistic regression ‘by hand’ in R</h1>
+<h4 class="author"><em>Darrel Robinson</em></h4>
+
+</div>
+
+
+<div id="logistic-regression" class="section level1">
+<h1>Logistic regression</h1>
+<p>Let’s take the classic mtcars dataset:</p>
+<pre class="r"><code>library(tidyverse)
+mtcars &lt;- as_tibble(mtcars)
+head(mtcars)</code></pre>
+<pre><code>## # A tibble: 6 x 11
+##     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  21.0    6.  160.  110.  3.90  2.62  16.5    0.    1.    4.    4.
+## 2  21.0    6.  160.  110.  3.90  2.88  17.0    0.    1.    4.    4.
+## 3  22.8    4.  108.   93.  3.85  2.32  18.6    1.    1.    4.    1.
+## 4  21.4    6.  258.  110.  3.08  3.22  19.4    1.    0.    3.    1.
+## 5  18.7    8.  360.  175.  3.15  3.44  17.0    0.    0.    3.    2.
+## 6  18.1    6.  225.  105.  2.76  3.46  20.2    1.    0.    3.    1.</code></pre>
+<p><br></p>
+<p>and define a binary variable, guzzler, that identifies those vehicles below or above the median value of miles per gallon fuel efficiency:</p>
+<pre class="r"><code>mtcars$guzzler &lt;- ifelse(mtcars$mpg &gt; median(mtcars$mpg, na.rm = TRUE), 0, 1)
+head(mtcars)</code></pre>
+<pre><code>## # A tibble: 6 x 12
+##     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  21.0    6.  160.  110.  3.90  2.62  16.5    0.    1.    4.    4.
+## 2  21.0    6.  160.  110.  3.90  2.88  17.0    0.    1.    4.    4.
+## 3  22.8    4.  108.   93.  3.85  2.32  18.6    1.    1.    4.    1.
+## 4  21.4    6.  258.  110.  3.08  3.22  19.4    1.    0.    3.    1.
+## 5  18.7    8.  360.  175.  3.15  3.44  17.0    0.    0.    3.    2.
+## 6  18.1    6.  225.  105.  2.76  3.46  20.2    1.    0.    3.    1.
+## # ... with 1 more variable: guzzler &lt;dbl&gt;</code></pre>
+<p><br></p>
+<p>We’ll use this as our dependent variable which we’ll try to predict with displacement, disp.</p>
+<p><br> <br></p>
+</div>
+<div id="the-logit-function" class="section level1">
+<h1>The logit function</h1>
+<p>What we want to achieve given our binary outcome data is a measure of the probability of y = 1, that a vehicle is a “guzzler” in our case, given x. The logit function defines the probability of y given X as:</p>
+<p><span class="math inline">\(Pr(y | X) = \frac{\exp(\beta_0 + \beta_1X)}{1 + \exp(\beta_0 + \beta_1X)}\)</span></p>
+<p><br></p>
+<p>Let’s simplify this, and for the purpose of presentation, I’ll use <span class="math inline">\(P(x)\)</span> to represent <span class="math inline">\(Pr(y | X)\)</span> and <span class="math inline">\(e\)</span> to represent <span class="math inline">\(exp(\beta_0 + \beta_1X)\)</span>:</p>
+<p><span class="math inline">\(P(x) * (1 + e) = e\)</span></p>
+<p><br></p>
+<p><span class="math inline">\(P(x) + P(x)*e = e\)</span></p>
+<p><br></p>
+<p><span class="math inline">\(P(x) = e - P(x)*e\)</span></p>
+<p><br></p>
+<p><span class="math inline">\(P(x) = e(1 - P(x))\)</span></p>
+<p><br></p>
+<p><span class="math inline">\(\frac{P(x)}{1 - P(x)} = e\)</span></p>
+<p><br></p>
+<p>Replace our substitutes <span class="math inline">\(P(x)\)</span> and <span class="math inline">\(e\)</span> with our original terms and we get:</p>
+<p><span class="math inline">\(\frac{Pr(y|X)}{1 - Pr(y|X)} = exp(\beta_0 + \beta_1X)\)</span></p>
+<p><br></p>
+<p>This equation is known as the odds ratio. For example, an odds ratio of 4/1 means that there are 4 observations that score 1 on y for every 1 observation that scores a 0 on y. Taking the log of both sides gives us:</p>
+<p><span class="math inline">\(\frac{log(Pr(y|X))}{log(1 - Pr(y|X))} = \beta_0 + \beta_1X\)</span></p>
+<p><br></p>
+<p>So while we have non-linear data, the probabilities are assumed linear in the logit.</p>
+<p><br> <br></p>
+</div>
+<div id="likelihood" class="section level1">
+<h1>Likelihood</h1>
+<p>In logistic regression the <span class="math inline">\(\beta\)</span> parameters are not found using a given formula as they are in least-squares regression (the process is not deterministic). Instead, we have to provide the function with a starting value for each of the parameters that we want to estimate. With this initial starting point we can then calculate the likelihood of the data given the parameters that we have supplied. Once we have an estimate for this likelihood, we then try a different set of parameters and calculate the likelihood of the data given this new set. We continue on with this process until we find the set of parameters for which our estimated likelihood is highest - the maximum likelihood.</p>
+<pre class="r"><code>#set some initial parameter values
+b0 &lt;- 0.01
+b1 &lt;- 0.01
+pars &lt;- c(b0, b1)
+
+#define x and y
+x &lt;- cbind(1, mtcars$disp) #we need to include a column of 1s in our X matrix to represent the intercept
+y &lt;- mtcars$guzzler
+
+##the logit function from above, working backwards 
+logit &lt;- x %*% pars # %*% is the matrix multiplication operator
+exp_l &lt;- exp(logit) # gives us exp(b0 + b1*x)
+probabilities &lt;- exp(logit) / (1 + exp(logit)) #this is the logit function shown above
+
+##obtaining and summing the log likelihoods
+likelihoods &lt;- y * log(probabilities) + (1 - y) * log(1 - probabilities) #the likelihoods
+sum_likelihoods &lt;- sum(likelihoods) #sum of the likelihoods</code></pre>
+<p><br></p>
+<p>The sum of the likelihoods given our starting parameter values <span class="math inline">\(\beta_0\)</span> = <code>0.01</code> and <span class="math inline">\(\beta_1\)</span> = <code>0.01</code> is <code>-23.8443595</code>. Is this good? Bad? We don’t know. The only way we can really understand this is through comparison with other possible values for the <span class="math inline">\(\beta\)</span>s.</p>
+<p><br></p>
+<p>Let’s see what happens when we try different values for our <span class="math inline">\(\beta\)</span>s:</p>
+<pre class="r"><code>b0 &lt;- 0.02
+b1 &lt;- 0.02
+pars &lt;- c(b0,b1)
+
+logit &lt;- x %*% pars # %*% is the matrix multiplication operator
+exp_l &lt;- exp(logit) # gives us exp(b0 + b1*x)
+probabilities &lt;- exp(logit) / (1 + exp(logit)) #this is the logit function shown above
+likelihoods &lt;- y * log(probabilities) + (1 - y) * log(1 - probabilities) #the likelihoods
+sum_likelihoods &lt;- sum(likelihoods) #sum of the likelihoods</code></pre>
+<p><br></p>
+<p>With <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> set to 0.02, the sum of the likelihoods is <code>-39.507938</code>. Since the goal of logistic regression is to maximize the likelihood, these two parameter values represent a worse fit to the data. Let’s try two other parameter values:</p>
+<pre class="r"><code>b0 &lt;- -1.2
+b1 &lt;- 1
+pars &lt;- c(b0,b1)
+
+logit &lt;- x %*% pars # %*% is the matrix multiplication operator
+probabilities &lt;- exp(logit) / (1 + exp(logit)) #this is the logit function shown above
+likelihoods &lt;- y * log(probabilities) + (1 - y) * log(1 - probabilities) #the likelihoods
+sum_likelihoods &lt;- sum(likelihoods) #sum of the likelihoods</code></pre>
+<p><br></p>
+<p>Now we have <code>NaN</code>, the best yet. As you can see, going over all possible beta values to find the maximum likelihood manually would be a very long process. But, we don’t need to; we can use optimization functions.</p>
+<p><br> <br></p>
+</div>
+<div id="a-logistic-regression-function" class="section level1">
+<h1>A logistic regression function</h1>
+<pre class="r"><code>logistic_reg &lt;- function(x, y, par) {
+  x &lt;- cbind(1, x) #input a column of 1s for the intercept
+  probs &lt;- exp(x %*% par)  / (1 + exp(x %*% par))
+  ll &lt;- sum(y * log(probs) + (1 - y) * log(1 - probs))
+  return(-ll) #the optim function minimizes, we want to maximize. So we set our output to -ll.
+}</code></pre>
+<p><br></p>
+<p>And now we optimize the parameters for our logistic regression function based on the x and y variables we are interested in to find the set of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> that maximize the likelihood.</p>
+<pre class="r"><code>optim(par = c(-0.01, 0.01), fn = logistic_reg, x = mtcars$disp, y = mtcars$guzzler)</code></pre>
+<pre><code>## $par
+## [1] -6.87531841  0.03475048
+## 
+## $value
+## [1] 6.751449
+## 
+## $counts
+## function gradient 
+##      161       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<p><br></p>
+<p>If we compare to the parameter estimates from the optimization to the coefficients produced by the <code>glm()</code> function:</p>
+<pre class="r"><code>glm_mod &lt;- glm(guzzler ~ disp, data = mtcars, family = binomial)
+coef(glm_mod)</code></pre>
+<pre><code>## (Intercept)        disp 
+## -6.87410400  0.03474336</code></pre>
+<p><br> <br></p>
+</div>
+<div id="visualizing-logistic-regression" class="section level1">
+<h1>Visualizing logistic regression</h1>
+<p>I’m going to show two coding approaches to the visualization for this model, both using <code>ggplot</code>. The first method involves creating a data grid which includes x values and corresponding predicted y values based on the given model. Here I use the <code>data_grid</code> function from the <code>modelr</code> package, but you could just as easily accomplish the same in base R by building a data frame. Then we create a simple scatter plot of the original data, and overlap a fitted line using the grid data. Creating a data grid with predicted values is not necessary in this case, as I show with the second method, but the advantage of this approach is that it works with <em>any type of model</em>.</p>
+<pre class="r"><code>library(modelr)
+grid &lt;- mtcars %&gt;%
+  data_grid(disp = seq(min(mtcars$disp), max(mtcars$disp), 5)) %&gt;%
+  mutate(preds = predict(glm_mod, type = &quot;response&quot;, newdata = .))
+
+mtcars %&gt;%
+  ggplot(aes(x = disp, y = guzzler)) + 
+  geom_point() + 
+  geom_line(data = grid, aes(y = preds), col = &quot;blue&quot;, size = 1) + 
+  scale_y_continuous(breaks = c(0,1))</code></pre>
+<p><img src="logistic_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><br></p>
+<p>In the case of logistic regression, a simpler approach is to simply add the fitted line to a scatterplot with <code>geom_smooth</code>.</p>
+<pre class="r"><code>ggplot(mtcars, aes(x = disp, y = guzzler)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;glm&quot;, method.args = list(c(family = &quot;binomial&quot;)), se = F) + 
+  scale_y_continuous(breaks = c(0,1))</code></pre>
+<p><img src="logistic_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

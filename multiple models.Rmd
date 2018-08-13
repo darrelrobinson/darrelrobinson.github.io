@@ -1,0 +1,57 @@
+---
+title: "Running, saving, and exporting multiple models with four lines of code"
+author: "Darrel Robinson"
+date: "July 2, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I run into this kind of situation a lot, I have a single model specification that I want to apply to several different dependent variables.  
+
+Let's use as an example the diamonds dataset.  There are ten variables in the dataset:
+
+```{r}
+data <- read_csv("/home/dj-ubuntu/Documents/Dem Attitudes Marcus/sweden_wvs.csv")
+data(diamonds)
+dim(diamonds)
+names(diamonds)
+```
+
+Now assume that you were interested in the relationship between carat and the cut, color, clarity, depth, table, and price of the diamond.  That is, you have one covariate of interest and several dependent variables.  Some of these models are non-sensical; for example, cutting a diamond to a specific carat cannot affect its color.  But this is simply for illustration purposes.  
+
+And it is not purely trivial.  In my work this type of situation arises a lot as one can have a set of covariates for a given model, say some demographic characteristics of an individual as reported on a survey, and their responses to a battery of survey items measuring, say, one's regime preferences.  Often this battery of survey questions can be combined into an index, but it is nevertheless useful to study each item individually to ensure that no single item is driving the results.  
+
+
+The standard way of accomplishing this is to run each model and save it as its own object:
+
+```{r}
+m1 <- lm(cut ~ carat, data = diamonds)
+m2 <- lm(color ~ carat, data = diamonds)
+m3 <- lm(clarity ~ carat, data = diamonds)
+m4 <- lm(depth ~ carat, data = diamonds)
+m5 <- lm(table ~ carat, data = diamonds)
+m6 <- lm(price ~ carat, data = diamonds)
+```
+
+With only six models this is not too cumbersome.  But with more it quickly becomes problematic and involves a lot of copy-pasting.  Further, if you want to then obtain heterscedasticity robust standard errors you need six more lines of code, six more copy-pasting, and six more chances to make a mistake.
+
+
+## Using map() or lapply() to run multiple models
+
+```{r}
+library(tidyverse)
+dep_vars <- names(data[-which(colnames(data) == "carat")])
+frm <- paste0(dep_vars, " ~ carat") %>% map(as.formula)
+models <- map(frm, function(x) lm(formula = x, data = data))
+```
+
+and now export it
+
+```{r}
+library(stargazer)
+stargazer(models,
+          type = "html")
+```
