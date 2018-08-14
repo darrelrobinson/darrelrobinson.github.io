@@ -268,7 +268,7 @@ head(mtcars)</code></pre>
 </div>
 <div id="likelihood" class="section level1">
 <h1>Likelihood</h1>
-<p>In logistic regression the <span class="math inline">\(\beta\)</span> parameters are not found using a given formula as they are in least-squares regression (the process is not deterministic). Instead, we have to provide the function with a starting value for each of the parameters that we want to estimate. With this initial starting point we can then calculate the likelihood of the data given the parameters that we have supplied. Once we have an estimate for this likelihood, we then try a different set of parameters and calculate the likelihood of the data given this new set. We continue on with this process until we find the set of parameters for which our estimated likelihood is highest - the maximum likelihood.</p>
+<p>In logistic regression the <span class="math inline">\(\beta\)</span> parameters are not found using a given formula as they are in least-squares regression (the process is not deterministic). Instead, we have to provide the function with a starting value for each of the parameters that we want to estimate. With this initial starting point we can then calculate the likelihood of the parameters given the data that we observe. Once we have an estimate for this likelihood, we then try a different set of parameters and calculate the likelihood of these new parameters given the data. We continue on with this process until we find the set of parameters for which our estimated likelihood is highest - the maximum likelihood.</p>
 <pre class="r"><code>#set some initial parameter values
 b0 &lt;- 0.01
 b1 &lt;- 0.01

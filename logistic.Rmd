@@ -93,7 +93,7 @@ So while we have non-linear data, the probabilities are assumed linear in the lo
 
 #Likelihood
 
-In logistic regression the $\beta$ parameters are not found using a given formula as they are in least-squares regression (the process is not deterministic).  Instead, we have to provide the function with a starting value for each of the parameters that we want to estimate.  With this initial starting point we can then calculate the likelihood of the data given the parameters that we have supplied.  Once we have an estimate for this likelihood, we then try a different set of parameters and calculate the likelihood of the data given this new set.  We continue on with this process until we find the set of parameters for which our estimated likelihood is highest - the maximum likelihood.  
+In logistic regression the $\beta$ parameters are not found using a given formula as they are in least-squares regression (the process is not deterministic).  Instead, we have to provide the function with a starting value for each of the parameters that we want to estimate.  With this initial starting point we can then calculate the likelihood of the parameters given the data that we observe.  Once we have an estimate for this likelihood, we then try a different set of parameters and calculate the likelihood of these new parameters given the data.  We continue on with this process until we find the set of parameters for which our estimated likelihood is highest - the maximum likelihood.  
 
 
 ```{r}
