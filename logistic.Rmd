@@ -155,7 +155,7 @@ sum_likelihoods <- sum(likelihoods) #sum of the likelihoods
 
 <br>
 
-Now we have ```r sum_likelihoods```, the best yet.  As you can see, going over all possible beta values to find the maximum likelihood manually would be a very long process.  But, we don't need to; we can use optimization functions.  
+Now we have ```r sum_likelihoods```, the best yet.  As you can see, going over all possible beta values to find the maximum likelihood manually would be a very long process.  But, we don't need to; we can use an optimization function.  
 
 
 <br>
@@ -175,7 +175,7 @@ logistic_reg <- function(x, y, par) {
 
 <br>
 
-And now we optimize the parameters for our logistic regression function based on the x and y variables we are interested in to find the set of $\beta_0$ and $\beta_1$ that maximize the likelihood.
+And now we optimize the parameters for our logistic regression function based on the x and y variables we are interested in to find the set of $\beta_0$ and $\beta_1$ for which the log likelihood is maximized.
 
 
 ```{r}
@@ -184,7 +184,7 @@ optim(par = c(-0.01, 0.01), fn = logistic_reg, x = mtcars$disp, y = mtcars$guzzl
 
 <br>
 
-If we compare to the parameter estimates from the optimization to the coefficients produced by the ```glm()``` function:
+If we compare to the parameter estimates from our function-and-optimization approach to the coefficients produced by the ```glm()``` function:
 
 
 ```{r}
