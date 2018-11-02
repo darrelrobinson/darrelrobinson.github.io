@@ -10,7 +10,8 @@ This page is just a various collection of things I've done in R that I thought w
 
 Writing custom regression functions using R's built-in optimization function.  
 
-<br>
+---
+
 
 ## [Logistic regression 'by-hand' in R](logistic.html)
 
