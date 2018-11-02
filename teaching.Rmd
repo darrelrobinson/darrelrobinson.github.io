@@ -6,7 +6,9 @@ title: "Teaching Experience"
 
 ## Political Science C - Research Methods
 
-* Seminar teacher and Lecturer (Spring 2018)
+* Lecturer
+    - Descriptive Statistics (Spring 2018 - Fall 2018)
+    - Introduction to R and RCommander (Fall 2018)
 * Seminar teacher (Spring 2017)
     
 See the course description <a href="http://www.uu.se/en/admissions/master/selma/kursplan/?kKod=2SK079" target="_blank">here</a>
