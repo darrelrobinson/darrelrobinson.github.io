@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Linear Regression by Optimization</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Darrel Robinson's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="research.html">Research</a>
+</li>
+<li>
+  <a href="teaching.html">Teaching Experience</a>
+</li>
+<li>
+  <a href="r_stuff.html">R Projects</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Linear Regression by Optimization</h1>
+
+</div>
+
+
+<p>Why would you do this? Optimization is generally faster than finding coefficient estimates deterministically because the latter approach requires taking the inverse of a matrix. For most purposes this difference will not matter, but if you are using large datasets it may become relevant. The second reason is to get a better intuitive understanding of the mechanics of linear regression - you are after all writing a regression function from scratch. So let’s start by creating some data. I use the <code>mvrnorm()</code> function from the <code>MASS</code> package to draw from a multivariate normal distribution. The <code>sigma</code> argument specifies the correlation between the two variables that I draw, <code>0.7</code> in this case, and from there I generate some y values based on an intercept of <code>2</code>, and coefficient values of <code>0.3</code> and <code>0.7</code> for <code>X1</code> and <code>X2</code> respectively.</p>
+<pre class="r"><code>library(mvtnorm)
+x &lt;- MASS::mvrnorm(100000, mu = c(0.5, 1), Sigma = matrix(c(1, 0.7, 0.7, 1), ncol = 2)) 
+y &lt;- 2 + 0.3*x[,1] + 0.7*x[,2] + rnorm(100000)
+df &lt;- data.frame(x, y)</code></pre>
+<p>Now that we have our data we need to write a simple function to calculate the residual sum of squares, OLS regression aims to minimize this sum. The function takes an x, our independent variables, a y, our dependent variable, and parameters. The parameters are the coefficients that we want to estimate. The residual sum of squares is therefore the sum of the squared differences between our observed y and the expected value of y given the coefficients.</p>
+<p>Now we can call R’s <code>optim()</code> function specifying our x variables (in matrix form - don’t forget to add a column of 1s for the intercept), our y variable, and some initial coefficient values, par. I also specify the method as “BFGS” (don’t ask me about the different optimization methods, I have no idea. But BFGS seems to be the only one that generally works for this type of problem.).</p>
+<pre class="r"><code>fun_min_rss &lt;- function(x, y, par) {
+  sum((y - x%*%par)^2)
+}
+
+#don&#39;t forget to add a column of 1s to X for the intercept
+optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = &quot;BFGS&quot;)</code></pre>
+<pre><code>## $par
+## [1] 2.0004998 0.2949135 0.7037780
+## 
+## $value
+## [1] 100000.9
+## 
+## $counts
+## function gradient 
+##       44        5 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<p>Now let’s compare our optimization estimates with those calculated deterministically via R’s built-in <code>lm()</code> function. They should of course be the same:</p>
+<pre class="r"><code>optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = &quot;BFGS&quot;)$par</code></pre>
+<pre><code>## [1] 2.0004998 0.2949135 0.7037780</code></pre>
+<pre class="r"><code>coef(lm(y ~ X1 + X2, data = df))</code></pre>
+<pre><code>## (Intercept)          X1          X2 
+##   2.0004998   0.2949135   0.7037780</code></pre>
+<p>Bang on! We’ve built a linear regression function.</p>
+<div id="but-what-if-we-want-standard-errors-as-well" class="section level2">
+<h2>But what if we want standard errors as well?</h2>
+<p>In that case we can simply build a new function which we’ll call <code>fun_reg</code> to call the <code>optim</code> function and calculate <code>sigma</code>, the standard error of the regression. Using <code>sigma</code> we can then calculate the variance-covariance matrix from which we can extract the standard errors of the beta coefficients.</p>
+<pre class="r"><code>fun_reg &lt;- function(x, y) {
+  x &lt;- cbind(1, x)
+  mod &lt;- optim(par = rep(1, ncol(x)), fn = fun_min_rss, x = x, y = y, method = &quot;BFGS&quot;)
+  coefs &lt;- mod$par
+  sigma &lt;- sqrt(mod$value / (nrow(x) - ncol(x)))
+  vcov &lt;- sigma^2*solve((t(x)%*%x))
+  ses &lt;- sqrt(diag(vcov))
+  return(list(coefs = coefs, sigma = sigma, vcov = vcov, ses = ses))
+}</code></pre>
+<p>This function contains a few steps. First we add a column of 1s to X (remember, we did that in the optim call previously). Second, we call <code>optim</code> and save the results to the object <code>mod</code>.</p>
+<p>Extracting the coefficient estimates from the <code>mod</code> object is easy, they are saved under <code>mod$par</code> just as before. We can also calculate sigma with <code>mod</code>. The value of the optimized statistic, <code>RSS</code> in this case, is saved in the object under <code>mod$value</code>. Dividing the RSS by the degrees of freedom of the regression (the number of observations minus the number of parameter estimates) and taking the square root gives the standard error of the regression, <code>sigma</code>. Last, we calculate the standard errors. In the simple regression case the standard error of <code>beta</code> is simply <code>sigma</code> divided by the sum of squares of <code>x</code>. In the multiple regression case the idea is the same, but we now have the matrix <code>X</code> rather than a vector. Matrix division does not exist of course so we take <code>sigma</code> times the inverse of <code>X'X</code>. This results in a matrix for which the diagonal elements represent the variances, and the off-diagonal elements represent the covariances between the coefficient estimates. In other words, the square root of the diagonal of the variance-covariance matrix are the standard errors of the beta coefficients.</p>
+<pre class="r"><code>#Call the new function
+fun_reg(x = cbind(df$X1, df$X2), y = df$y)</code></pre>
+<pre><code>## $coefs
+## [1] 2.0004998 0.2949135 0.7037780
+## 
+## $sigma
+## [1] 1.000019
+## 
+## $vcov
+##               [,1]          [,2]          [,3]
+## [1,]  2.065048e-05  3.765950e-06 -1.257824e-05
+## [2,]  3.765950e-06  1.958043e-05 -1.363845e-05
+## [3,] -1.257824e-05 -1.363845e-05  1.948421e-05
+## 
+## $ses
+## [1] 0.004544280 0.004424978 0.004414092</code></pre>
+<pre class="r"><code>#compare to the standard errors calculated by lm function
+sqrt(diag(vcov(lm(y ~ X1 + X2, data = df))))</code></pre>
+<pre><code>## (Intercept)          X1          X2 
+## 0.004544280 0.004424978 0.004414092</code></pre>
+<p>Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the lm function is generally slow compared to optimization in the first place. So we’ve lost that benefit of the approach. BUT! The second advantage to optimzation is that you can minimize (or maximize) whatever statistic you want. Let’s minimize the sum of the absolute errors instead of the squares.</p>
+</div>
+<div id="minimizing-the-sum-of-the-absolute-errors" class="section level1">
+<h1>Minimizing the sum of the absolute errors</h1>
+<p>To do so we need to do two things. The first is to create a function to calculate the sum of the absolute errors rather than the sum of the squared errors. Second, we need to adapt our <code>fun_reg</code> function to allow us to call this new function.</p>
+<pre class="r"><code>#new function to calculate the sum of the absolute errors
+fun_min_ab_er &lt;- function(x, y, par) {
+  sum(abs(y - x%*%par))
+}
+
+
+#adapted the fun_reg function to take a function argument, fn
+fun_reg &lt;- function(x, y, fn = fun_min_rss) { 
+  x &lt;- cbind(1, x)
+  mod &lt;- optim(par = rep(1, ncol(x)), fn = fn, x = x, y = y, method = &quot;BFGS&quot;)
+  coefs &lt;- mod$par
+  sigma &lt;- sqrt(mod$value / (nrow(x) - ncol(x)))
+  vcov &lt;- sigma^2*solve((t(x)%*%x))
+  ses &lt;- sqrt(diag(vcov))
+  return(list(coefs = coefs, sigma = sigma, vcov = vcov, ses = ses))
+}
+
+#now we can specify in the fun_reg function which statistic we want to minimize
+fun_reg(x = cbind(df$X1, df$X2), y = df$y, fn = fun_min_ab_er)</code></pre>
+<pre><code>## $coefs
+## [1] 1.9943593 0.2904549 0.7080915
+## 
+## $sigma
+## [1] 0.8930033
+## 
+## $vcov
+##               [,1]          [,2]          [,3]
+## [1,]  1.646719e-05  3.003059e-06 -1.003019e-05
+## [2,]  3.003059e-06  1.561391e-05 -1.087562e-05
+## [3,] -1.003019e-05 -1.087562e-05  1.553717e-05
+## 
+## $ses
+## [1] 0.004057979 0.003951444 0.003941722</code></pre>
+<p>In this case we have no outliers in our data so the estimates are similar to those from the OLS regression. But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified). I’m not entirely sure what this means for the standard errors and sigma to be honest. Intuitively I don’t think it matters because their calculations are dependent on the observed - expected values. If my intution is correct then the standard errors are as well, but perhaps don’t take my word for it without further investigation.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

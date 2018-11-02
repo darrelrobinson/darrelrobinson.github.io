@@ -6,9 +6,15 @@ This page is just a various collection of things I've done in R that I thought w
 
 <br>
 
+## [Linear Regression with Optimization](reg_by_optimization.html)
+
+Writing custom regression functions using R's built-in optimization function.  
+
+<br>
+
 ## [Logistic regression 'by-hand' in R](logistic.html)
 
-A short break down of logistic regression I wrote when I was learning the method.  I don't like applying methods without understanding some basics of the function and how to program one myself so I always try to dig a little bit beyond a simple conceptual understanding.  
+A short break down of logistic regression I wrote when I was learning the method.  
 
 ---
 

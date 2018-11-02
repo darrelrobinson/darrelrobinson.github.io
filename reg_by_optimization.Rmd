@@ -1,0 +1,121 @@
+---
+title: "Linear Regression by Optimization"
+author: ""
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Why would you do this?  Optimization is generally faster than finding coefficient estimates deterministically because the latter approach requires taking the inverse of a matrix.  For most purposes this difference will not matter, but if you are using large datasets it may become relevant.  The second reason is to get a better intuitive understanding of the mechanics of linear regression - you are after all writing a regression function from scratch.  So let's start by creating some data.  I use the ```mvrnorm()``` function from the ```MASS``` package to draw from a multivariate normal distribution.  The ```sigma``` argument specifies the correlation between the two variables that I draw, ```0.7``` in this case, and from there I generate some y values based on an intercept of ```2```, and coefficient values of ```0.3``` and ```0.7``` for ```X1``` and ```X2``` respectively.  
+
+
+```{r}
+library(mvtnorm)
+x <- MASS::mvrnorm(100000, mu = c(0.5, 1), Sigma = matrix(c(1, 0.7, 0.7, 1), ncol = 2)) 
+y <- 2 + 0.3*x[,1] + 0.7*x[,2] + rnorm(100000)
+df <- data.frame(x, y)
+```
+
+
+
+Now that we have our data we need to write a simple function to calculate the residual sum of squares, OLS regression aims to minimize this sum.  The function takes an x, our independent variables, a y, our dependent variable, and parameters.  The parameters are the coefficients that we want to estimate.  The residual sum of squares is therefore the sum of the squared differences between our observed y and the expected value of y given the coefficients.  
+
+Now we can call R's ```optim()``` function specifying our x variables (in matrix form - don't forget to add a column of 1s for the intercept), our y variable, and some initial coefficient values, par.  I also specify the method as "BFGS" (don't ask me about the different optimization methods, I have no idea.  But BFGS seems to be the only one that generally works for this type of problem.). 
+
+
+
+``` {r}
+fun_min_rss <- function(x, y, par) {
+  sum((y - x%*%par)^2)
+}
+
+#don't forget to add a column of 1s to X for the intercept
+optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = "BFGS")
+```
+
+
+
+
+Now let's compare our optimization estimates with those calculated deterministically via R's built-in ```lm()``` function.  They should of course be the same:
+
+
+```{r}
+optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = "BFGS")$par
+coef(lm(y ~ X1 + X2, data = df))
+```
+
+
+Bang on!  We've built a linear regression function.  
+
+
+
+## But what if we want standard errors as well?
+
+In that case we can simply build a new function which we'll call ```fun_reg``` to call the ```optim``` function and calculate ```sigma```, the standard error of the regression.  Using ```sigma``` we can then calculate the variance-covariance matrix from which we can extract the standard errors of the beta coefficients. 
+
+```{r}
+fun_reg <- function(x, y) {
+  x <- cbind(1, x)
+  mod <- optim(par = rep(1, ncol(x)), fn = fun_min_rss, x = x, y = y, method = "BFGS")
+  coefs <- mod$par
+  sigma <- sqrt(mod$value / (nrow(x) - ncol(x)))
+  vcov <- sigma^2*solve((t(x)%*%x))
+  ses <- sqrt(diag(vcov))
+  return(list(coefs = coefs, sigma = sigma, vcov = vcov, ses = ses))
+}
+
+```
+
+This function contains a few steps.  First we add a column of 1s to X (remember, we did that in the optim call previously).  Second, we call ```optim``` and save the results to the object ```mod```.  
+
+Extracting the coefficient estimates from the ```mod``` object is easy, they are saved under ```mod$par``` just as before.  We can also calculate sigma with ```mod```.  The value of the optimized statistic, ```RSS``` in this case, is saved in the object under ```mod$value```.  Dividing the RSS by the degrees of freedom of the regression (the number of observations minus the number of parameter estimates) and taking the square root gives the standard error of the regression, ```sigma```.  Last, we calculate the standard errors.  In the simple regression case the standard error of ```beta``` is simply ```sigma``` divided by the sum of squares of ```x```.  In the multiple regression case the idea is the same, but we now have the matrix ```X``` rather than a vector.  Matrix division does not exist of course so we take ```sigma``` times the inverse of ```X'X```.  This results in a matrix for which the diagonal elements represent the variances, and the off-diagonal elements represent the covariances between the coefficient estimates.  In other words, the square root of the diagonal of the variance-covariance matrix are the standard errors of the beta coefficients.  
+
+
+```{r}
+#Call the new function
+fun_reg(x = cbind(df$X1, df$X2), y = df$y)
+
+#compare to the standard errors calculated by lm function
+sqrt(diag(vcov(lm(y ~ X1 + X2, data = df))))
+```
+
+
+
+Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the lm function is generally slow compared to optimization in the first place.  So we've lost that benefit of the approach.  BUT!  The second advantage to optimzation is that you can minimize (or maximize) whatever statistic you want.  Let's minimize the sum of the absolute errors instead of the squares.
+
+
+# Minimizing the sum of the absolute errors
+To do so we need to do two things.  The first is to create a function to calculate the sum of the absolute errors rather than the sum of the squared errors.  Second, we need to adapt our ```fun_reg``` function to allow us to call this new function.  
+
+
+```{r}
+#new function to calculate the sum of the absolute errors
+fun_min_ab_er <- function(x, y, par) {
+  sum(abs(y - x%*%par))
+}
+
+
+#adapted the fun_reg function to take a function argument, fn
+fun_reg <- function(x, y, fn = fun_min_rss) { 
+  x <- cbind(1, x)
+  mod <- optim(par = rep(1, ncol(x)), fn = fn, x = x, y = y, method = "BFGS")
+  coefs <- mod$par
+  sigma <- sqrt(mod$value / (nrow(x) - ncol(x)))
+  vcov <- sigma^2*solve((t(x)%*%x))
+  ses <- sqrt(diag(vcov))
+  return(list(coefs = coefs, sigma = sigma, vcov = vcov, ses = ses))
+}
+
+#now we can specify in the fun_reg function which statistic we want to minimize
+fun_reg(x = cbind(df$X1, df$X2), y = df$y, fn = fun_min_ab_er)
+```
+
+
+In this case we have no outliers in our data so the estimates are similar to those from the OLS regression.  But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified).  I'm not entirely sure what this means for the standard errors and sigma to be honest.  Intuitively I don't think it matters because their calculations are dependent on the observed - expected values.  If my intution is correct then the standard errors are as well, but perhaps don't take my word for it without further investigation.  
+
+
