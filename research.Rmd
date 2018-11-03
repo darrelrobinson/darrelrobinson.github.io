@@ -28,19 +28,26 @@ Full working paper found <a href="https://www.v-dem.net/media/filer_public/2d/bc
 
 ---
 
-## Learning Politics: Revisiting the compensation hypothesis between education and political knowledge
-
-Abstract: In spite of a robust correlation between education and political knowledge recent results from matching and quasi-experimental studies have been inconsistent.  I argue that family background of students can help to explain these diverging findings.  I test the compensation hypothesis that education should affect students that come from homes with low levels of political discussion to a greater degree with a twin-matching design.  Previous studies of the compensation hypothesis are limited in two respects – they are open to social desirability bias in the dependent variable, or rely on proxies for political discussion in the home.  This study addresses these two limitations.  I find that education has a positive effect on political knowledge independent of family background and genetics, but only among those that are less exposed to political discussion in the home.  Among those who frequently discussed politics with family during their upbringing, education does not lead to greater political knowledge.  
-
-Currently under review.
-
----
-
 ## Education Opportunity and Support for Authoritarian Rule: Evidence from the expansion of higher education in China
 
 Abstract: A vast modernization literature argues for the democratizing potential of education.  Yet authoritarian regimes throughout the world expand their education systems in an effort to appease citizens and promote economic growth.  Scholars of China argue that this strategy allows the regime to enjoy a high level of public support.  These two diverging theoretical predictions raise an interesting empirical question, what effect does education opportunity have on individual-level support for authoritarian rule?  I leverage an expansion in higher education in China as an identification strategy to study the effect of education opportunity on two measures of support for authoritarian rule: support for government censorship and trust in the central government.  While the reform opened  millions of positions in higher education, it has also resulted in high graduate unemployment and a general decrease in perceived quality.  I find that higher education opportunity led to a substantial decrease in regime support.  I further find that education opportunity led to increased belief that citizens should have an input on policy, and increased social trust.  I argue that this is evidence that value change in education is responsible for the negative effect of the education reform, not dissatisfaction due to high graduate unemployment.
 
 Full working paper found at my <a href="https://www.researchgate.net/profile/Darrel_Robinson/contributions" target="_blank">ResearchGate</a> page.
 
+---
+
+## Limited Time or Secure Residence: A study of the short-term effect of permanent residency on labour market inclusion
+
+#### With Kristoffer Jutvik, Uppsala University
+
+Abstract: In this study we exploit a sudden policy change, implemented in Sweden, in order to evaluate the effects of permanent residency on labour market inclusion. In short, the policy change implied that Syrians were granted permanent instead of temporary residency as before the new regulations. Using detailed Swedish registry data, we examine the effect of the introduction of permanent residency on three measures of labour market inclusion 16 months after residency status was granted. We analyze the data through a simple difference-in-means as well as through comparison to groups unaffected by the policy in a difference-in-differences design and a synthetic control group approach. Our conclusions are twofold. On the one hand, we conclude that temporary residents that are subject to a relatively less-inclusive situation earn more and are unemployed less. However, at the same time, they are less likely to spend time in education than are those with permanent residency. While the political debate about the issue is often framed in such empirical terms, our results suggest that both approaches can be supported empirically, albeit with different metrics  of success.  In our view then, the issue should be viewed as largely normative.  Rather than debate whether one approach will lead to greater inclusion than the other, focus should be shifted to discussing the type of inclusion that the different approaches are likely to provide. 
 
 
+
+---
+
+## Learning Politics: Revisiting the compensation hypothesis between education and political knowledge
+
+Abstract: In spite of a robust correlation between education and political knowledge recent results from matching and quasi-experimental studies have been inconsistent.  I argue that family background of students can help to explain these diverging findings.  I test the compensation hypothesis that education should affect students that come from homes with low levels of political discussion to a greater degree with a twin-matching design.  Previous studies of the compensation hypothesis are limited in two respects – they are open to social desirability bias in the dependent variable, or rely on proxies for political discussion in the home.  This study addresses these two limitations.  I find that education has a positive effect on political knowledge independent of family background and genetics, but only among those that are less exposed to political discussion in the home.  Among those who frequently discussed politics with family during their upbringing, education does not lead to greater political knowledge.  
+
+Currently under review.
