@@ -214,7 +214,7 @@ $(document).ready(function () {
 y &lt;- 2 + 0.3*x[,1] + 0.7*x[,2] + rnorm(1000)
 df &lt;- data.frame(x, y)</code></pre>
 <p>Now that we have our data we need to write a simple function to calculate the residual sum of squares, OLS regression aims to minimize this sum. The function takes an x, our independent variables, a y, our dependent variable, and parameters. The parameters are the coefficients that we want to estimate. The residual sum of squares is therefore the sum of the squared differences between our observed y and the expected value of y given the coefficients.</p>
-<p>Now we can call R’s <code>optim()</code> function specifying our x variables (in matrix form - don’t forget to add a column of 1s for the intercept), our y variable, and some initial coefficient values, par. I also specify the method as “BFGS” (don’t ask me about the different optimization methods, I have no idea. But BFGS seems to be the only one that generally works for this type of problem.).</p>
+<p>Then we can call R’s <code>optim()</code> function specifying our <code>x</code> variables (in matrix form - don’t forget to add a column of 1s for the intercept), our <code>y</code> variable, and some initial coefficient values, <code>par</code>. I also specify the method as “BFGS” (don’t ask me about the different optimization methods, I have no idea. But “BFGS” seems to be the only one that generally works for this type of problem.).</p>
 <pre class="r"><code>fun_min_rss &lt;- function(x, y, par) {
   sum((y - x%*%par)^2)
 }
@@ -222,10 +222,10 @@ df &lt;- data.frame(x, y)</code></pre>
 #don&#39;t forget to add a column of 1s to X for the intercept
 optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = &quot;BFGS&quot;)</code></pre>
 <pre><code>## $par
-## [1] 2.0007829 0.2845740 0.7204486
+## [1] 1.9631979 0.3179077 0.7354423
 ## 
 ## $value
-## [1] 1044.324
+## [1] 1018.138
 ## 
 ## $counts
 ## function gradient 
@@ -238,14 +238,14 @@ optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, metho
 ## NULL</code></pre>
 <p>Now let’s compare our optimization estimates with those calculated deterministically via R’s built-in <code>lm()</code> function. They should of course be the same:</p>
 <pre class="r"><code>optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = &quot;BFGS&quot;)$par</code></pre>
-<pre><code>## [1] 2.0007829 0.2845740 0.7204486</code></pre>
+<pre><code>## [1] 1.9631979 0.3179077 0.7354423</code></pre>
 <pre class="r"><code>coef(lm(y ~ X1 + X2, data = df))</code></pre>
 <pre><code>## (Intercept)          X1          X2 
-##   2.0007829   0.2845740   0.7204486</code></pre>
+##   1.9631979   0.3179077   0.7354422</code></pre>
 <p>Bang on! We’ve built a linear regression function.</p>
 <div id="but-what-if-we-want-standard-errors-as-well" class="section level2">
 <h2>But what if we want standard errors as well?</h2>
-<p>In that case we can simply build a new function which we’ll call <code>fun_reg</code> to call the <code>optim</code> function and calculate <code>sigma</code>, the standard error of the regression. Using <code>sigma</code> we can then calculate the variance-covariance matrix from which we can extract the standard errors of the beta coefficients.</p>
+<p>In that case we can simply build a new function, which we’ll call <code>fun_reg</code>, to call the <code>optim</code> function and calculate <code>sigma</code>, the standard error of the regression. Using <code>sigma</code> we can then calculate the variance-covariance matrix from which we can extract the standard errors of the beta coefficients.</p>
 <pre class="r"><code>fun_reg &lt;- function(x, y) {
   x &lt;- cbind(1, x)
   mod &lt;- optim(par = rep(1, ncol(x)), fn = fun_min_rss, x = x, y = y, method = &quot;BFGS&quot;)
@@ -253,35 +253,34 @@ optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, metho
   sigma &lt;- sqrt(mod$value / (nrow(x) - ncol(x)))
   vcov &lt;- sigma^2*solve((t(x)%*%x))
   ses &lt;- sqrt(diag(vcov))
-  return(list(coefs = coefs, sigma = sigma, vcov = vcov, ses = ses))
+  return(list(coefs = coefs, sigma = sigma, vcov = vcov, standard_errors = ses))
 }</code></pre>
-<p>This function contains a few steps. First we add a column of 1s to X (remember, we did that in the optim call previously). Second, we call <code>optim</code> and save the results to the object <code>mod</code>.</p>
-<p>Extracting the coefficient estimates from the <code>mod</code> object is easy, they are saved under <code>mod$par</code> just as before. We can also calculate sigma with <code>mod</code>. The value of the optimized statistic, <code>RSS</code> in this case, is saved in the object under <code>mod$value</code>. Dividing the RSS by the degrees of freedom of the regression (the number of observations minus the number of parameter estimates) and taking the square root gives the standard error of the regression, <code>sigma</code>. Last, we calculate the standard errors. In the simple regression case the standard error of <code>beta</code> is simply <code>sigma</code> divided by the sum of squares of <code>x</code>. In the multiple regression case the idea is the same, but we now have the matrix <code>X</code> rather than a vector. Matrix division does not exist of course so we take <code>sigma</code> times the inverse of <code>X'X</code>. This results in a matrix for which the diagonal elements represent the variances, and the off-diagonal elements represent the covariances between the coefficient estimates. In other words, the square root of the diagonal of the variance-covariance matrix are the standard errors of the beta coefficients.</p>
+<p>This function contains a few steps. First we add a column of 1s to <code>X</code> (remember, we did that in the optim call previously). Second, we call <code>optim</code> and save the results to the object <code>mod</code>. Extracting the coefficient estimates from the <code>mod</code> object is easy, they are saved under <code>mod$par</code> just as before. We can also calculate <code>sigma</code> with <code>mod</code>. The value of the optimized statistic, <code>RSS</code> in this case, is saved in the object under <code>mod$value</code>. Dividing the <code>RSS</code> by the degrees of freedom of the regression (the number of observations minus the number of parameter estimates) and taking the square root gives the standard error of the regression, <code>sigma</code>. Last, we calculate the standard errors of the coefficients. In the simple regression case the standard error of <code>beta</code> is simply <code>sigma</code> divided by the sum of squares of <code>x</code>. In the multiple regression case the idea is the same, but we now have the matrix <code>X</code> rather than a vector. Matrix division does not exist of course so we take <code>sigma</code> times the inverse of <code>X'X</code>. This results in a matrix for which the diagonal elements represent the variances, and the off-diagonal elements represent the covariances between the <code>X</code> columns. In other words, the square root of the diagonal of the variance-covariance matrix are the standard errors of the beta coefficients.</p>
 <pre class="r"><code>#Call the new function
 fun_reg(x = cbind(df$X1, df$X2), y = df$y)</code></pre>
 <pre><code>## $coefs
-## [1] 2.0007829 0.2845740 0.7204486
+## [1] 1.9631979 0.3179077 0.7354423
 ## 
 ## $sigma
-## [1] 1.023458
+## [1] 1.010545
 ## 
 ## $vcov
-##               [,1]          [,2]         [,3]
-## [1,]  0.0022297088  0.0003720024 -0.001355699
-## [2,]  0.0003720024  0.0019580779 -0.001327471
-## [3,] -0.0013556995 -0.0013274706  0.001995448
+##              [,1]         [,2]         [,3]
+## [1,]  0.002093115  0.000437808 -0.001305290
+## [2,]  0.000437808  0.002051333 -0.001464987
+## [3,] -0.001305290 -0.001464987  0.002053219
 ## 
-## $ses
-## [1] 0.04721979 0.04425017 0.04467043</code></pre>
+## $standard_errors
+## [1] 0.04575058 0.04529165 0.04531246</code></pre>
 <pre class="r"><code>#compare to the standard errors calculated by lm function
 sqrt(diag(vcov(lm(y ~ X1 + X2, data = df))))</code></pre>
 <pre><code>## (Intercept)          X1          X2 
-##  0.04721979  0.04425017  0.04467043</code></pre>
-<p>Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the lm function is generally slow compared to optimization in the first place. So we’ve lost that benefit of the approach. BUT! The second advantage to optimzation is that you can minimize (or maximize) whatever statistic you want. Let’s minimize the sum of the absolute errors instead of the squares.</p>
+##  0.04575058  0.04529165  0.04531246</code></pre>
+<p>Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the <code>lm()</code> function is generally slow compared to optimization in the first place. So we’ve lost that benefit of the approach. BUT! The second advantage to optimzation is that you can optimize whatever statistic you want.</p>
 </div>
 <div id="minimizing-the-sum-of-the-absolute-errors" class="section level1">
 <h1>Minimizing the sum of the absolute errors</h1>
-<p>To do so we need to do two things. The first is to create a function to calculate the sum of the absolute errors rather than the sum of the squared errors. Second, we need to adapt our <code>fun_reg</code> function to allow us to call this new function.</p>
+<p>Let’s minimize the sum of the absolute errors instead of the squares. To do so we need to do two things. The first is to create a function to calculate the sum of the absolute errors rather than the sum of the squared errors. Second, we need to adapt our <code>fun_reg</code> function to allow us to call this new function.</p>
 <pre class="r"><code>#new function to calculate the sum of the absolute errors
 fun_min_ab_er &lt;- function(x, y, par) {
   sum(abs(y - x%*%par))
@@ -302,19 +301,19 @@ fun_reg &lt;- function(x, y, fn = fun_min_rss) {
 #now we can specify in the fun_reg function which statistic we want to minimize
 fun_reg(x = cbind(df$X1, df$X2), y = df$y, fn = fun_min_ab_er)</code></pre>
 <pre><code>## $coefs
-## [1] 2.0159819 0.3028591 0.6884685
+## [1] 1.9243897 0.3202850 0.7654226
 ## 
 ## $sigma
-## [1] 0.9024898
+## [1] 0.8972476
 ## 
 ## $vcov
 ##               [,1]          [,2]         [,3]
-## [1,]  0.0017337748  0.0002892612 -0.001054163
-## [2,]  0.0002892612  0.0015225603 -0.001032213
-## [3,] -0.0010541635 -0.0010322133  0.001551618
+## [1,]  0.0016500845  0.0003451411 -0.001029011
+## [2,]  0.0003451411  0.0016171460 -0.001154907
+## [3,] -0.0010290114 -0.0011549068  0.001618633
 ## 
 ## $ses
-## [1] 0.04163862 0.03902000 0.03939059</code></pre>
+## [1] 0.04062123 0.04021375 0.04023224</code></pre>
 <p>In this case we have no outliers in our data so the estimates are similar to those from the OLS regression. But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified). I’m not entirely sure what this means for the standard errors and sigma to be honest. Intuitively I don’t think it matters because their calculations are dependent on the observed - expected values. If my intution is correct then the standard errors are as well, but perhaps don’t take my word for it without further investigation.</p>
 </div>
 

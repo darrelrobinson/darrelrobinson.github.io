@@ -24,7 +24,7 @@ df <- data.frame(x, y)
 
 Now that we have our data we need to write a simple function to calculate the residual sum of squares, OLS regression aims to minimize this sum.  The function takes an x, our independent variables, a y, our dependent variable, and parameters.  The parameters are the coefficients that we want to estimate.  The residual sum of squares is therefore the sum of the squared differences between our observed y and the expected value of y given the coefficients.  
 
-Now we can call R's ```optim()``` function specifying our x variables (in matrix form - don't forget to add a column of 1s for the intercept), our y variable, and some initial coefficient values, par.  I also specify the method as "BFGS" (don't ask me about the different optimization methods, I have no idea.  But BFGS seems to be the only one that generally works for this type of problem.). 
+Then we can call R's ```optim()``` function specifying our ```x``` variables (in matrix form - don't forget to add a column of 1s for the intercept), our ```y``` variable, and some initial coefficient values, ```par```.  I also specify the method as "BFGS" (don't ask me about the different optimization methods, I have no idea.  But "BFGS" seems to be the only one that generally works for this type of problem.). 
 
 
 
@@ -55,7 +55,7 @@ Bang on!  We've built a linear regression function.
 
 ## But what if we want standard errors as well?
 
-In that case we can simply build a new function which we'll call ```fun_reg``` to call the ```optim``` function and calculate ```sigma```, the standard error of the regression.  Using ```sigma``` we can then calculate the variance-covariance matrix from which we can extract the standard errors of the beta coefficients. 
+In that case we can simply build a new function, which we'll call ```fun_reg```, to call the ```optim``` function and calculate ```sigma```, the standard error of the regression.  Using ```sigma``` we can then calculate the variance-covariance matrix from which we can extract the standard errors of the beta coefficients. 
 
 ```{r}
 fun_reg <- function(x, y) {
@@ -65,14 +65,14 @@ fun_reg <- function(x, y) {
   sigma <- sqrt(mod$value / (nrow(x) - ncol(x)))
   vcov <- sigma^2*solve((t(x)%*%x))
   ses <- sqrt(diag(vcov))
-  return(list(coefs = coefs, sigma = sigma, vcov = vcov, ses = ses))
+  return(list(coefs = coefs, sigma = sigma, vcov = vcov, standard_errors = ses))
 }
 
 ```
 
-This function contains a few steps.  First we add a column of 1s to X (remember, we did that in the optim call previously).  Second, we call ```optim``` and save the results to the object ```mod```.  
 
-Extracting the coefficient estimates from the ```mod``` object is easy, they are saved under ```mod$par``` just as before.  We can also calculate sigma with ```mod```.  The value of the optimized statistic, ```RSS``` in this case, is saved in the object under ```mod$value```.  Dividing the RSS by the degrees of freedom of the regression (the number of observations minus the number of parameter estimates) and taking the square root gives the standard error of the regression, ```sigma```.  Last, we calculate the standard errors.  In the simple regression case the standard error of ```beta``` is simply ```sigma``` divided by the sum of squares of ```x```.  In the multiple regression case the idea is the same, but we now have the matrix ```X``` rather than a vector.  Matrix division does not exist of course so we take ```sigma``` times the inverse of ```X'X```.  This results in a matrix for which the diagonal elements represent the variances, and the off-diagonal elements represent the covariances between the coefficient estimates.  In other words, the square root of the diagonal of the variance-covariance matrix are the standard errors of the beta coefficients.  
+
+This function contains a few steps.  First we add a column of 1s to ```X``` (remember, we did that in the optim call previously).  Second, we call ```optim``` and save the results to the object ```mod```.  Extracting the coefficient estimates from the ```mod``` object is easy, they are saved under ```mod$par``` just as before.  We can also calculate ```sigma``` with ```mod```.  The value of the optimized statistic, ```RSS``` in this case, is saved in the object under ```mod$value```.  Dividing the ```RSS``` by the degrees of freedom of the regression (the number of observations minus the number of parameter estimates) and taking the square root gives the standard error of the regression, ```sigma```.  Last, we calculate the standard errors of the coefficients.  In the simple regression case the standard error of ```beta``` is simply ```sigma``` divided by the sum of squares of ```x```.  In the multiple regression case the idea is the same, but we now have the matrix ```X``` rather than a vector.  Matrix division does not exist of course so we take ```sigma``` times the inverse of ```X'X```.  This results in a matrix for which the diagonal elements represent the variances, and the off-diagonal elements represent the covariances between the ```X``` columns.  In other words, the square root of the diagonal of the variance-covariance matrix are the standard errors of the beta coefficients.  
 
 
 ```{r}
@@ -85,11 +85,11 @@ sqrt(diag(vcov(lm(y ~ X1 + X2, data = df))))
 
 
 
-Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the lm function is generally slow compared to optimization in the first place.  So we've lost that benefit of the approach.  BUT!  The second advantage to optimzation is that you can minimize (or maximize) whatever statistic you want.  Let's minimize the sum of the absolute errors instead of the squares.
+Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the ```lm()``` function is generally slow compared to optimization in the first place.  So we've lost that benefit of the approach.  BUT!  The second advantage to optimzation is that you can optimize whatever statistic you want.  
 
 
 # Minimizing the sum of the absolute errors
-To do so we need to do two things.  The first is to create a function to calculate the sum of the absolute errors rather than the sum of the squared errors.  Second, we need to adapt our ```fun_reg``` function to allow us to call this new function.  
+Let's minimize the sum of the absolute errors instead of the squares.  To do so we need to do two things.  The first is to create a function to calculate the sum of the absolute errors rather than the sum of the squared errors.  Second, we need to adapt our ```fun_reg``` function to allow us to call this new function.  
 
 
 ```{r}
