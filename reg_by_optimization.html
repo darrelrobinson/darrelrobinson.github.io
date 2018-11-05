@@ -222,14 +222,14 @@ df &lt;- data.frame(x, y)</code></pre>
 #don&#39;t forget to add a column of 1s to X for the intercept
 optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = &quot;BFGS&quot;)</code></pre>
 <pre><code>## $par
-## [1] 1.9759597 0.3540405 0.6666018
+## [1] 2.0258354 0.3826534 0.6324121
 ## 
 ## $value
-## [1] 935.5568
+## [1] 976.6703
 ## 
 ## $counts
 ## function gradient 
-##       29        6 
+##       26        6 
 ## 
 ## $convergence
 ## [1] 0
@@ -238,10 +238,10 @@ optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, metho
 ## NULL</code></pre>
 <p>Now let’s compare our optimization estimates with those calculated deterministically via R’s built-in <code>lm()</code> function. They should of course be the same:</p>
 <pre class="r"><code>optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, method = &quot;BFGS&quot;)$par</code></pre>
-<pre><code>## [1] 1.9759597 0.3540405 0.6666018</code></pre>
+<pre><code>## [1] 2.0258354 0.3826534 0.6324121</code></pre>
 <pre class="r"><code>coef(lm(y ~ X1 + X2, data = df))</code></pre>
 <pre><code>## (Intercept)          X1          X2 
-##   1.9759597   0.3540405   0.6666018</code></pre>
+##   2.0258354   0.3826534   0.6324121</code></pre>
 <p>Bang on! We’ve built a linear regression function.</p>
 <div id="but-what-if-we-want-standard-errors-as-well" class="section level2">
 <h2>But what if we want standard errors as well?</h2>
@@ -259,23 +259,23 @@ optim(par = c(1, 1, 1), fun_min_rss, x = cbind(1, df$X1, df$X2), y = df$y, metho
 <pre class="r"><code>#Call the new function
 fun_reg(x = cbind(df$X1, df$X2), y = df$y)</code></pre>
 <pre><code>## $coefs
-## [1] 1.9759597 0.3540405 0.6666018
+## [1] 2.0258354 0.3826534 0.6324121
 ## 
 ## $sigma
-## [1] 0.968696
+## [1] 0.9897521
 ## 
 ## $vcov
 ##               [,1]          [,2]         [,3]
-## [1,]  0.0019725254  0.0004762206 -0.001294840
-## [2,]  0.0004762206  0.0019212349 -0.001437290
-## [3,] -0.0012948399 -0.0014372903  0.002036838
+## [1,]  0.0020127702  0.0003218425 -0.001207036
+## [2,]  0.0003218425  0.0018120564 -0.001245387
+## [3,] -0.0012070360 -0.0012453869  0.001851710
 ## 
 ## $standard_errors
-## [1] 0.04441312 0.04383189 0.04513134</code></pre>
+## [1] 0.04486391 0.04256826 0.04303150</code></pre>
 <pre class="r"><code>#compare to the standard errors calculated by lm function
 sqrt(diag(vcov(lm(y ~ X1 + X2, data = df))))</code></pre>
 <pre><code>## (Intercept)          X1          X2 
-##  0.04441312  0.04383189  0.04513134</code></pre>
+##  0.04486391  0.04256826  0.04303150</code></pre>
 <p>Calculating standard errors slows down the function dramatically because it takes the inverse of a large matrix, precisely the reason why the <code>lm()</code> function is generally slow compared to optimization in the first place. So we’ve lost that benefit of the approach. BUT! The second advantage to optimzation is that you can optimize whatever statistic you want.</p>
 </div>
 <div id="minimizing-the-sum-of-the-absolute-errors" class="section level1">
@@ -301,20 +301,20 @@ fun_reg &lt;- function(x, y, fn = fun_min_rss) {
 #now we can specify in the fun_reg function which statistic we want to minimize
 fun_reg(x = cbind(df$X1, df$X2), y = df$y, fn = fun_min_ab_er)</code></pre>
 <pre><code>## $coefs
-## [1] 1.9335124 0.3389598 0.6843945
+## [1] 2.0213428 0.3909217 0.6345433
 ## 
 ## $sigma
-## [1] 0.8782301
+## [1] 0.8897654
 ## 
 ## $vcov
-##               [,1]          [,2]         [,3]
-## [1,]  0.0016213033  0.0003914262 -0.001064284
-## [2,]  0.0003914262  0.0015791454 -0.001181371
-## [3,] -0.0010642845 -0.0011813706  0.001674165
+##               [,1]          [,2]          [,3]
+## [1,]  0.0016266435  0.0002601007 -0.0009754801
+## [2,]  0.0002601007  0.0014644344 -0.0010064738
+## [3,] -0.0009754801 -0.0010064738  0.0014964807
 ## 
 ## $ses
-## [1] 0.04026541 0.03973846 0.04091656</code></pre>
-<p>In this case we have no outliers in our data so the estimates are similar to those from the OLS regression. But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified). I’m not entirely sure what this means for calculations of the standard errors and sigma to be honest. They are slightly smaller than those provided in the least-squares solution above, as they should be. Intuitively I don’t think it matters because their calculations are dependent on the observed - expected values. But don’t take my word on it without investigating further.</p>
+## [1] 0.04033167 0.03826793 0.03868437</code></pre>
+<p>In this case we have no outliers in our data so the estimates are similar to those from the OLS regression. But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified). I’m not entirely sure what this means for calculations of the standard errors and sigma to be honest. They are slightly smaller than those provided in the least-squares solution above, as they should be. But they may be properly calculated in a different manner.</p>
 </div>
 
 

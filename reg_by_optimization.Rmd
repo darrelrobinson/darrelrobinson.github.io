@@ -115,6 +115,6 @@ fun_reg(x = cbind(df$X1, df$X2), y = df$y, fn = fun_min_ab_er)
 ```
 
 
-In this case we have no outliers in our data so the estimates are similar to those from the OLS regression.  But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified).  I'm not entirely sure what this means for calculations of the standard errors and sigma to be honest.  They are slightly smaller than those provided in the least-squares solution above, as they should be.  Intuitively I don't think it matters because their calculations are dependent on the observed - expected values.  But don't take my word on it without investigating further.  
+In this case we have no outliers in our data so the estimates are similar to those from the OLS regression.  But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified).  I'm not entirely sure what this means for calculations of the standard errors and sigma to be honest.  They are slightly smaller than those provided in the least-squares solution above, as they should be.  But they may be properly calculated in a different manner.  
 
 
