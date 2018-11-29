@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-Why would you do this?  Optimization is generally faster than finding coefficient estimates deterministically because the latter approach requires taking the inverse of a matrix.  For most purposes this difference will not matter, but if you are using large datasets it may become relevant.  The second reason is to get a better intuitive understanding of the mechanics of linear regression - you are after all writing a regression function from scratch.  So let's start by creating some data.  I use the ```mvrnorm()``` function from the ```MASS``` package to draw from a multivariate normal distribution.  The ```sigma``` argument specifies the correlation between the two variables that I draw, ```0.7``` in this case, and from there I generate some y values based on an intercept of ```2```, and coefficient values of ```0.3``` and ```0.7``` for ```X1``` and ```X2``` respectively.  
+Why would you do this?  Optimization is generally faster than finding coefficient estimates deterministically because the latter approach requires taking the inverse of a matrix.  For most purposes this difference will not matter, but if you are using datasets with many predictors it may become relevant.  The second reason is to get a better intuitive understanding of the mechanics of linear regression - you are after all writing a regression function from scratch.  So let's start by creating some data.  I use the ```mvrnorm()``` function from the ```MASS``` package to draw from a multivariate normal distribution.  The ```sigma``` argument specifies the correlation between the two variables that I draw, ```0.7``` in this case, and from there I generate some y values based on an intercept of ```2```, and coefficient values of ```0.3``` and ```0.7``` for ```X1``` and ```X2``` respectively.  
 
 
 ```{r}
@@ -115,6 +115,6 @@ fun_reg(x = cbind(df$X1, df$X2), y = df$y, fn = fun_min_ab_er)
 ```
 
 
-In this case we have no outliers in our data so the estimates are similar to those from the OLS regression.  But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified).  I'm not entirely sure what this means for calculations of the standard errors and sigma to be honest.  They are slightly smaller than those provided in the least-squares solution above, as they should be.  But they may be properly calculated in a different manner.  
+In this case we have no outliers in our data so the estimates are similar to those from the OLS regression.  But minimzing the sum of the absolute errors will provide a slope estimate that is less sensitive to outliers because the residual values are not squared before summing (large outliers do not get magnified).  I'm not entirely sure what this means for calculations of the standard errors and sigma to be honest.  They are slightly smaller than those provided in the least-squares solution above, as they should be.  But they may be properly calculated in a different manner.   
 
 
